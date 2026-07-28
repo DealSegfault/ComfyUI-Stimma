@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 STIMMA_TOOL_INFO = "StimmaToolInfo"
 STIMMA_FIELD_TYPES = {
     "StimmaPromptParam", "StimmaImageParam", "StimmaMaskParam",
-    "StimmaImagesParam", "StimmaVideoParam", "StimmaVideosParam", "StimmaSeedParam",
-    "StimmaResolutionParam",
+    "StimmaImagesParam", "StimmaVideoParam", "StimmaVideosParam", "StimmaAudioParam",
+    "StimmaSeedParam", "StimmaResolutionParam",
 }
 STIMMA_PARAM_TYPES = {
     "StimmaIntParam", "StimmaFloatParam", "StimmaStringParam",
@@ -54,6 +54,7 @@ _STIMMA_OUTPUT_FIELD = {
 
 _IMAGE_INPUT_TYPES = {"StimmaImageParam", "StimmaImagesParam"}
 _VIDEO_INPUT_TYPES = {"StimmaVideoParam", "StimmaVideosParam"}
+_AUDIO_INPUT_TYPES = {"StimmaAudioParam"}
 
 # Annotation-only nodes that don't affect execution — skip in validation
 _ANNOTATION_NODE_TYPES = {"Note", "MarkdownNote"}
@@ -1485,6 +1486,8 @@ def _extract_stimma_nodes(api_prompt: Dict[str, Any]) -> Optional[Dict[str, Any]
                 node_entry["name"] = "input_images"
             elif class_type in _VIDEO_INPUT_TYPES:
                 node_entry["name"] = "input_videos"
+            elif class_type in _AUDIO_INPUT_TYPES:
+                node_entry["name"] = "input_audios"
             else:
                 node_entry["name"] = inputs.get("name", "")
             field_nodes.append(node_entry)

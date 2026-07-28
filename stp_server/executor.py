@@ -27,6 +27,7 @@ _INPUT_DATA_FIELDS = {
     "StimmaImagesParam": "image",
     "StimmaVideoParam": "video",
     "StimmaVideosParam": "video",
+    "StimmaAudioParam": "audio",
     "StimmaSeedParam": "value",
 }
 
@@ -413,6 +414,12 @@ async def _inject_fields(
     elif not isinstance(video_values, list):
         video_values = [video_values]
 
+    audio_values = input_data.get("input_audios")
+    if audio_values is None:
+        audio_values = []
+    elif not isinstance(audio_values, list):
+        audio_values = [audio_values]
+
     logger.warning(
         "Stimma input ingest: keys=%s input_images=%d input_media_ids=%d input_videos=%d input_video_media_ids=%d",
         sorted(list(input_data.keys())),
@@ -422,14 +429,16 @@ async def _inject_fields(
         len(input_data.get("input_video_media_ids") or []) if isinstance(input_data.get("input_video_media_ids"), list) else (1 if input_data.get("input_video_media_ids") else 0),
     )
     logger.warning(
-        "Stimma normalized media: image_values=%d video_values=%d image_sample=%s",
+        "Stimma normalized media: image_values=%d video_values=%d audio_values=%d image_sample=%s",
         len(image_values),
         len(video_values),
+        len(audio_values),
         image_values[:3],
     )
 
     image_cursor = 0
     video_cursor = 0
+    audio_cursor = 0
 
     for node in workflow.field_nodes:
         node_id = node["node_id"]
@@ -583,6 +592,28 @@ async def _inject_fields(
                     "multi-video chaining must be handled in the workflow graph",
                     len(uploaded_names),
                 )
+            continue
+
+        if class_type == "StimmaAudioParam":
+            is_required = bool(node.get("inputs", {}).get("required", True))
+            consumed = audio_values[audio_cursor:audio_cursor + 1]
+            audio_cursor += len(consumed)
+            logger.warning(
+                "Node %s StimmaAudioParam consume: consumed=%d cursor=%d required=%s",
+                node_id,
+                len(consumed),
+                audio_cursor,
+                is_required,
+            )
+
+            if not consumed:
+                if is_required:
+                    raise RuntimeError("Missing required input_audios (expected at least 1 audio file)")
+                unprovided_node_ids.append(node_id)
+                continue
+
+            uploaded_name = await _download_and_upload_audio(consumed[0], context, instance)
+            prompt[node_id]["inputs"][data_field] = uploaded_name
             continue
 
         if class_type == "StimmaSeedParam":
@@ -912,6 +943,51 @@ async def _download_and_upload_video(
     raise FileNotFoundError(f"No valid video input candidates: {tried}")
 
 
+async def _download_and_upload_audio(
+    asset_id: str,
+    context: "ExecutionContext",
+    instance,
+) -> str:
+    """Download an STP audio asset and upload it to ComfyUI."""
+    candidates = asset_id if isinstance(asset_id, (list, tuple)) else [asset_id]
+    last_err = None
+    tried: List[str] = []
+
+    for candidate in candidates:
+        asset_ref = str(candidate)
+        tried.append(asset_ref)
+        audio_data = None
+        try:
+            audio_data = await context.assets.download(asset_ref)
+        except FileNotFoundError as err:
+            last_err = err
+            local_path = Path(asset_ref).expanduser()
+            if local_path.exists() and local_path.is_file():
+                audio_data = local_path.read_bytes()
+            else:
+                continue
+
+        ext = Path(asset_ref).suffix or ".wav"
+        temp_path = os.path.join(
+            tempfile.gettempdir(),
+            f"stimma_upload_{context.request_id}_{os.urandom(4).hex()}{ext}",
+        )
+
+        try:
+            with open(temp_path, "wb") as f:
+                f.write(audio_data)
+            uploaded_name = await instance.upload_audio(temp_path)
+            _track_upload(context, uploaded_name)
+            return uploaded_name
+        finally:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+    if last_err is not None:
+        raise FileNotFoundError(f"Asset not found for any candidate: {tried}") from last_err
+    raise FileNotFoundError(f"No valid audio input candidates: {tried}")
+
+
 def _inject_params(
     prompt: Dict[str, Any],
     workflow: "DiscoveredWorkflow",
@@ -1090,13 +1166,29 @@ def _is_input_required(
 # wired into the critical path: when the guide media isn't provided, the node is
 # bypassed and its main inputs flow straight to its outputs.
 #
-# {class_type: {guide_input_name: [(output_slot, passthrough_input_name), ...]}}
+# {class_type: {guide_input_name: [(output_slot, passthrough_input_name[, chase_class]), ...]}}
 # When guide_input_name's source is stripped, each consumer of output_slot is
 # rewired to the source of passthrough_input_name.
+#
+# The optional third element handles a guide whose effect is split across two
+# nodes: when the passthrough source is a node of `chase_class`, we rewire past
+# it to ITS same-named input and drop it too (if nothing else uses it). That is
+# what makes a guide-specific LoRA optional — bypassing the guide node alone
+# would leave the LoRA applied to every generation that didn't use the guide.
 _BYPASS_ON_MISSING_GUIDE: Dict[str, Dict[str, List[tuple]]] = {
     # LTXVAddGuide(positive, negative, vae, latent, image, ...) -> (positive, negative, latent).
     # With no guide image it is identity over (positive, negative, latent).
     "LTXVAddGuide": {"image": [(0, "positive"), (1, "negative"), (2, "latent")]},
+    # LTXVReferenceAudio(model, positive, negative, reference_audio, audio_vae, ...)
+    # -> (model, positive, negative). With no reference clip it is identity over
+    # all three — and its ID-LoRA has to come off the model chain with it, since
+    # that LoRA is trained for reference-driven talking heads and would otherwise
+    # skew every ordinary generation.
+    "LTXVReferenceAudio": {
+        "reference_audio": [
+            (0, "model", "LoraLoaderModelOnly"), (1, "positive"), (2, "negative"),
+        ]
+    },
 }
 
 
@@ -1110,10 +1202,21 @@ def _bypass_guide_node(
     """
     inputs = prompt[node_id].get("inputs", {})
     rewire = {}
-    for out_slot, in_name in mapping:
+    chased: List[str] = []
+    for entry in mapping:
+        out_slot, in_name = entry[0], entry[1]
+        chase_class = entry[2] if len(entry) > 2 else None
         src = inputs.get(in_name)
         if not (isinstance(src, list) and len(src) == 2):
             return False  # no clean pass-through source — let the caller cascade-remove
+        if chase_class and prompt.get(src[0], {}).get("class_type") == chase_class:
+            # The passthrough runs through a node that belongs to this guide
+            # (e.g. its LoRA). Skip past it to its own same-named input.
+            upstream = prompt[src[0]].get("inputs", {}).get(in_name)
+            if not (isinstance(upstream, list) and len(upstream) == 2):
+                return False
+            chased.append(src[0])
+            src = upstream
         rewire[out_slot] = src
     for other_id, other in prompt.items():
         if other_id == node_id:
@@ -1122,6 +1225,29 @@ def _bypass_guide_node(
             if isinstance(v, list) and len(v) == 2 and v[0] == node_id and v[1] in rewire:
                 other["inputs"][k] = rewire[v[1]]
     del prompt[node_id]
+
+    # Drop each chased-through node once nothing references it. A shared node
+    # (say a LoRA the rest of the graph also uses) keeps its other consumers and
+    # stays put — only a guide-private one disappears.
+    for chased_id in chased:
+        if chased_id not in prompt:
+            continue
+        still_used = any(
+            isinstance(v, list) and len(v) == 2 and v[0] == chased_id
+            for other_id, other in prompt.items() if other_id != chased_id
+            for v in other.get("inputs", {}).values()
+        )
+        if still_used:
+            logger.info(
+                f"Keeping '{prompt[chased_id].get('class_type')}' (#{chased_id}) — "
+                "bypassed guide chased through it, but other nodes still use it"
+            )
+            continue
+        logger.info(
+            f"Dropping '{prompt[chased_id].get('class_type')}' (#{chased_id}) — "
+            "belongs to the bypassed guide"
+        )
+        del prompt[chased_id]
     return True
 
 

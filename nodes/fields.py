@@ -432,6 +432,64 @@ class StimmaVideosParam:
         return True
 
 
+class StimmaAudioParam:
+    """Audio input — loads an audio file as a ComfyUI AUDIO dict.
+
+    For audio-conditioned tools (LTX image+audio-to-video, lip-sync, voice
+    reference). Also reports the clip's duration so a workflow can size the
+    video to the audio instead of asking the user to keep the two in sync.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        input_dir = folder_paths.get_input_directory()
+        files = sorted(
+            [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+        )
+        return {
+            "required": {
+                "audio": (files, {"audio_upload": True}),
+                "required": ("BOOLEAN", {"default": True}),
+                "ui_control": (["audio_picker"],),
+                "ui_order": ("INT", {"default": 0, "min": 0, "max": 100}),
+                "ui_label": ("STRING", {"default": "Audio"}),
+                # driving  = the output reproduces this track (lip-sync, ia2v)
+                # reference = the clip only steers generated audio (voice identity)
+                "audio_role": (["driving", "reference"],),
+            },
+        }
+
+    RETURN_TYPES = ("AUDIO", "FLOAT")
+    RETURN_NAMES = ("audio", "duration")
+    FUNCTION = "execute"
+    CATEGORY = "Stimma/Params"
+
+    def execute(self, audio, required=True, ui_control="audio_picker", ui_order=0,
+                ui_label="Audio", audio_role="driving"):
+        audio_path = folder_paths.get_annotated_filepath(audio)
+
+        # ComfyUI's own av-based loader — the same one LoadAudio uses, so we
+        # accept every container it does (mp3/wav/m4a/flac/ogg).
+        from comfy_extras.nodes_audio import load as _load_audio
+        waveform, sample_rate = _load_audio(audio_path)
+        sample_rate = int(sample_rate)
+        duration_s = waveform.shape[-1] / float(sample_rate) if sample_rate else 0.0
+        return ({"waveform": waveform.unsqueeze(0), "sample_rate": sample_rate}, duration_s)
+
+    @classmethod
+    def IS_CHANGED(cls, audio, **kwargs):
+        return _safe_mtime_from_annotated(audio)
+
+    @classmethod
+    def VALIDATE_INPUTS(cls, audio, **kwargs):
+        # Mirrors StimmaImageParam/StimmaVideoParam: validate the file exists
+        # rather than relying on the COMBO "value in list" check, which
+        # snapshots the input directory and rejects freshly-uploaded files.
+        if not folder_paths.exists_annotated_filepath(audio):
+            return f"Invalid audio file: {audio}"
+        return True
+
+
 class StimmaSeedParam:
     """Seed input — provides a random or fixed seed value."""
 

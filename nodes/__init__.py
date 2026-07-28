@@ -8,6 +8,7 @@ from .fields import (
     StimmaImagesParam,
     StimmaVideoParam,
     StimmaVideosParam,
+    StimmaAudioParam,
     StimmaSeedParam,
 )
 from .params import (
@@ -33,6 +34,7 @@ NODE_CLASS_MAPPINGS = {
     "StimmaImagesParam": StimmaImagesParam,
     "StimmaVideoParam": StimmaVideoParam,
     "StimmaVideosParam": StimmaVideosParam,
+    "StimmaAudioParam": StimmaAudioParam,
     "StimmaSeedParam": StimmaSeedParam,
     "StimmaIntParam": StimmaIntParam,
     "StimmaFloatParam": StimmaFloatParam,
@@ -58,6 +60,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "StimmaImagesParam": "Stimma Images",
     "StimmaVideoParam": "Stimma Video",
     "StimmaVideosParam": "Stimma Videos",
+    "StimmaAudioParam": "Stimma Audio",
     "StimmaSeedParam": "Stimma Seed",
     "StimmaIntParam": "Stimma Int",
     "StimmaFloatParam": "Stimma Float",

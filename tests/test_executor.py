@@ -83,6 +83,39 @@ MOCK_OBJECT_INFO = {
             "optional": {},
         }
     },
+    "LoraLoaderModelOnly": {
+        "input": {
+            "required": {
+                "model": ("MODEL",),
+                "lora_name": (["a.safetensors"],),
+                "strength_model": ("FLOAT", {"default": 1.0}),
+            },
+            "optional": {},
+        }
+    },
+    "LTXVReferenceAudio": {
+        "input": {
+            "required": {
+                "model": ("MODEL",),
+                "positive": ("CONDITIONING",),
+                "negative": ("CONDITIONING",),
+                "reference_audio": ("AUDIO",),
+                "audio_vae": ("VAE",),
+            },
+            "optional": {},
+        }
+    },
+    "CFGGuider": {
+        "input": {
+            "required": {
+                "model": ("MODEL",),
+                "positive": ("CONDITIONING",),
+                "negative": ("CONDITIONING",),
+                "cfg": ("FLOAT", {"default": 1.0}),
+            },
+            "optional": {},
+        }
+    },
 }
 
 
@@ -210,6 +243,86 @@ class TestStripUnprovidedInputChains(unittest.TestCase):
         self.assertIn("ref", prompt)
         self.assertNotIn("latent", prompt["ref"]["inputs"])
         self.assertEqual(prompt["ref"]["inputs"]["conditioning"], ["other", 0])
+
+
+class TestReferenceAudioBypass(unittest.TestCase):
+    """No voice reference → the guide node AND its ID-LoRA leave the graph."""
+
+    def _make_prompt(self):
+        return {
+            "aud": {"class_type": "StimmaAudioParam", "inputs": {}},
+            "ckpt": {"class_type": "CheckpointLoaderSimple", "inputs": {}},
+            "distilled": {
+                "class_type": "LoraLoaderModelOnly",
+                "inputs": {"model": ["ckpt", 0], "lora_name": "distilled", "strength_model": 0.5},
+            },
+            "idlora": {
+                "class_type": "LoraLoaderModelOnly",
+                "inputs": {"model": ["distilled", 0], "lora_name": "id-lora", "strength_model": 1.0},
+            },
+            "ref": {
+                "class_type": "LTXVReferenceAudio",
+                "inputs": {
+                    "model": ["idlora", 0],
+                    "positive": ["pos", 0],
+                    "negative": ["neg", 0],
+                    "reference_audio": ["aud", 0],
+                    "audio_vae": ["vae", 0],
+                },
+            },
+            "pos": {"class_type": "CLIPTextEncode", "inputs": {}},
+            "neg": {"class_type": "CLIPTextEncode", "inputs": {}},
+            "vae": {"class_type": "VAELoader", "inputs": {}},
+            "guider": {
+                "class_type": "CFGGuider",
+                "inputs": {
+                    "model": ["ref", 0], "positive": ["ref", 1],
+                    "negative": ["ref", 2], "cfg": 1.0,
+                },
+            },
+            "guider2": {
+                "class_type": "CFGGuider",
+                "inputs": {
+                    "model": ["distilled", 0], "positive": ["pos", 0],
+                    "negative": ["neg", 0], "cfg": 1.0,
+                },
+            },
+        }
+
+    def test_bypass_drops_reference_node_and_its_lora(self):
+        prompt = self._make_prompt()
+        _strip_unprovided_input_chains(prompt, ["aud"], MOCK_OBJECT_INFO)
+
+        self.assertNotIn("aud", prompt)
+        self.assertNotIn("ref", prompt)
+        self.assertNotIn("idlora", prompt)  # the guide's LoRA goes with it
+        self.assertIn("distilled", prompt)  # the shared one stays
+
+        # The guider now reads the un-ID-LoRA'd model and the raw conditioning.
+        self.assertEqual(prompt["guider"]["inputs"]["model"], ["distilled", 0])
+        self.assertEqual(prompt["guider"]["inputs"]["positive"], ["pos", 0])
+        self.assertEqual(prompt["guider"]["inputs"]["negative"], ["neg", 0])
+        # The refine pass was never touched.
+        self.assertEqual(prompt["guider2"]["inputs"]["model"], ["distilled", 0])
+
+    def test_shared_lora_survives_the_chase(self):
+        """A LoRA the rest of the graph also uses is rewired past, not deleted."""
+        prompt = self._make_prompt()
+        prompt["guider2"]["inputs"]["model"] = ["idlora", 0]
+
+        _strip_unprovided_input_chains(prompt, ["aud"], MOCK_OBJECT_INFO)
+
+        self.assertNotIn("ref", prompt)
+        self.assertIn("idlora", prompt)
+        self.assertEqual(prompt["guider"]["inputs"]["model"], ["distilled", 0])
+        self.assertEqual(prompt["guider2"]["inputs"]["model"], ["idlora", 0])
+
+    def test_provided_audio_leaves_the_chain_intact(self):
+        prompt = self._make_prompt()
+        _strip_unprovided_input_chains(prompt, [], MOCK_OBJECT_INFO)
+        self.assertIn("ref", prompt)
+        self.assertIn("idlora", prompt)
+        self.assertEqual(prompt["guider"]["inputs"]["model"], ["ref", 0])
 
 
 class TestInjectFieldsListHandling(unittest.TestCase):

@@ -180,6 +180,39 @@ class SingleComfy:
                 response = json.loads(raw.decode("utf-8"))
                 return response.get("name", filename)
 
+    async def upload_audio(self, audio_path: str, overwrite: bool = True) -> str:
+        """Upload an audio file to ComfyUI's input directory."""
+        from pathlib import Path
+
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError(f"Audio file not found: {audio_path}")
+
+        filename = Path(audio_path).name
+        ext = Path(audio_path).suffix.lower()
+        content_type_map = {
+            ".wav": "audio/wav", ".mp3": "audio/mpeg", ".m4a": "audio/mp4",
+            ".flac": "audio/flac", ".ogg": "audio/ogg", ".opus": "audio/opus",
+        }
+        content_type = content_type_map.get(ext, "audio/wav")
+
+        session = await self._get_session()
+        with open(audio_path, "rb") as f:
+            form_data = aiohttp.FormData()
+            # /upload/image takes every input file type under the "image" field.
+            form_data.add_field("image", f, filename=filename, content_type=content_type)
+            form_data.add_field("type", "input")
+            form_data.add_field("overwrite", str(overwrite).lower())
+
+            async with session.post(
+                f"http://{self.addr}/upload/image", data=form_data
+            ) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise RuntimeError(f"Audio upload failed ({resp.status}): {error_text}")
+                raw = await resp.read()
+                response = json.loads(raw.decode("utf-8"))
+                return response.get("name", filename)
+
     async def interrupt(self) -> bool:
         """Interrupt current execution."""
         try:

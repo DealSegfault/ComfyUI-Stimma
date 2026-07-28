@@ -1,8 +1,8 @@
 {
   "id": "07824bbb-6672-4bb0-ac36-4313a519e35b",
   "revision": 0,
-  "last_node_id": 341,
-  "last_link_id": 658,
+  "last_node_id": 342,
+  "last_link_id": 659,
   "nodes": [
     {
       "id": 103,
@@ -259,6 +259,13 @@
             "name": "last_frame"
           },
           "link": 649
+        },
+        {
+          "localized_name": "voice_reference",
+          "name": "voice_reference",
+          "type": "AUDIO",
+          "label": "voice_reference",
+          "link": 659
         }
       ],
       "outputs": [
@@ -1320,6 +1327,105 @@
         true,
         10
       ]
+    },
+    {
+      "id": 342,
+      "type": "StimmaAudioParam",
+      "pos": [
+        -360,
+        1210
+      ],
+      "size": [
+        400,
+        178
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "required",
+          "name": "required",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "required"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ui_control",
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ui_order",
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ui_label",
+          "name": "ui_label",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_label"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio_role",
+          "name": "audio_role",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio_role"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            659
+          ]
+        },
+        {
+          "localized_name": "duration",
+          "name": "duration",
+          "type": "FLOAT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaAudioParam",
+        "cnr_id": "ComfyUI-Stimma"
+      },
+      "widgets_values": [
+        "example.wav",
+        false,
+        "audio_picker",
+        23,
+        "Voice Sample",
+        "reference"
+      ]
     }
   ],
   "links": [
@@ -1434,6 +1540,14 @@
       339,
       4,
       "BOOLEAN"
+    ],
+    [
+      659,
+      342,
+      0,
+      320,
+      13,
+      "AUDIO"
     ]
   ],
   "groups": [],
@@ -1444,8 +1558,8 @@
         "version": 1,
         "state": {
           "lastGroupId": 26,
-          "lastNodeId": 329,
-          "lastLinkId": 648,
+          "lastNodeId": 335,
+          "lastLinkId": 100024,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -1652,6 +1766,20 @@
             "pos": [
               866,
               4504
+            ]
+          },
+          {
+            "id": "a1b2c3d4-32486358-voice-ref",
+            "name": "voice_reference",
+            "type": "AUDIO",
+            "linkIds": [
+              100021
+            ],
+            "localized_name": "voice_reference",
+            "label": "voice_reference",
+            "pos": [
+              876.162109375,
+              4434
             ]
           }
         ],
@@ -1889,7 +2017,8 @@
                 "type": "VAE",
                 "links": [
                   481,
-                  496
+                  496,
+                  100020
                 ]
               }
             ],
@@ -2275,8 +2404,8 @@
                 "type": "MODEL",
                 "links": [
                   478,
-                  541,
-                  641
+                  641,
+                  100016
                 ]
               }
             ],
@@ -3421,7 +3550,7 @@
                 "name": "CONDITIONING",
                 "type": "CONDITIONING",
                 "links": [
-                  526
+                  100018
                 ]
               }
             ],
@@ -3467,13 +3596,13 @@
                 "localized_name": "positive",
                 "name": "positive",
                 "type": "CONDITIONING",
-                "link": 526
+                "link": 100022
               },
               {
                 "localized_name": "negative",
                 "name": "negative",
                 "type": "CONDITIONING",
-                "link": 527
+                "link": 100023
               },
               {
                 "localized_name": "frame_rate",
@@ -4064,7 +4193,7 @@
                 "name": "CONDITIONING",
                 "type": "CONDITIONING",
                 "links": [
-                  527
+                  100019
                 ]
               }
             ],
@@ -4110,7 +4239,7 @@
                 "localized_name": "model",
                 "name": "model",
                 "type": "MODEL",
-                "link": 541
+                "link": 100024
               },
               {
                 "localized_name": "positive",
@@ -5200,6 +5329,163 @@
               -1,
               1.0
             ]
+          },
+          {
+            "id": 334,
+            "type": "LoraLoaderModelOnly",
+            "pos": [
+              1660,
+              4300
+            ],
+            "size": [
+              430,
+              140
+            ],
+            "flags": {},
+            "order": 44,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 100016
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  100017
+                ]
+              }
+            ],
+            "properties": {
+              "enableTabs": false,
+              "tabWidth": 65,
+              "tabXOffset": 10,
+              "hasSecondTab": false,
+              "secondTabText": "Send Back",
+              "secondTabOffset": 80,
+              "secondTabWidth": 65,
+              "cnr_id": "comfy-core",
+              "ver": "0.3.75",
+              "Node name for S&R": "LoraLoaderModelOnly",
+              "models": [
+                {
+                  "name": "ltx-2.3-id-lora-talkvid-3k.safetensors",
+                  "url": "https://huggingface.co/Comfy-Org/ltx-2.3/resolve/main/split_files/loras/ltx-2.3-id-lora-talkvid-3k.safetensors",
+                  "directory": "loras"
+                }
+              ],
+              "ue_properties": {
+                "widget_ue_connectable": {},
+                "version": "7.7",
+                "input_ue_unconnectable": {}
+              }
+            },
+            "widgets_values": [
+              "ltx-2.3-id-lora-talkvid-3k.safetensors",
+              1
+            ]
+          },
+          {
+            "id": 335,
+            "type": "LTXVReferenceAudio",
+            "pos": [
+              2050,
+              4300
+            ],
+            "size": [
+              320,
+              228
+            ],
+            "flags": {},
+            "order": 46,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 100017
+              },
+              {
+                "localized_name": "positive",
+                "name": "positive",
+                "type": "CONDITIONING",
+                "link": 100018
+              },
+              {
+                "localized_name": "negative",
+                "name": "negative",
+                "type": "CONDITIONING",
+                "link": 100019
+              },
+              {
+                "localized_name": "reference_audio",
+                "name": "reference_audio",
+                "type": "AUDIO",
+                "link": 100021
+              },
+              {
+                "label": "Audio VAE",
+                "localized_name": "audio_vae",
+                "name": "audio_vae",
+                "type": "VAE",
+                "link": 100020
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  100024
+                ]
+              },
+              {
+                "localized_name": "positive",
+                "name": "positive",
+                "type": "CONDITIONING",
+                "links": [
+                  100022
+                ]
+              },
+              {
+                "localized_name": "negative",
+                "name": "negative",
+                "type": "CONDITIONING",
+                "links": [
+                  100023
+                ]
+              }
+            ],
+            "properties": {
+              "enableTabs": false,
+              "tabWidth": 65,
+              "tabXOffset": 10,
+              "hasSecondTab": false,
+              "secondTabText": "Send Back",
+              "secondTabOffset": 80,
+              "secondTabWidth": 65,
+              "cnr_id": "comfy-core",
+              "ver": "0.18.1",
+              "Node name for S&R": "LTXVReferenceAudio",
+              "ue_properties": {
+                "widget_ue_connectable": {},
+                "version": "7.7",
+                "input_ue_unconnectable": {}
+              }
+            },
+            "widgets_values": [
+              3,
+              0,
+              1
+            ]
           }
         ],
         "groups": [
@@ -5364,14 +5650,6 @@
             "target_id": 282,
             "target_slot": 2,
             "type": "CONDITIONING"
-          },
-          {
-            "id": 541,
-            "origin_id": 285,
-            "origin_slot": 0,
-            "target_id": 314,
-            "target_slot": 0,
-            "type": "MODEL"
           },
           {
             "id": 518,
@@ -5644,22 +5922,6 @@
             "target_id": 298,
             "target_slot": 0,
             "type": "INT"
-          },
-          {
-            "id": 526,
-            "origin_id": 303,
-            "origin_slot": 0,
-            "target_id": 304,
-            "target_slot": 0,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 527,
-            "origin_id": 313,
-            "origin_slot": 0,
-            "target_id": 304,
-            "target_slot": 1,
-            "type": "CONDITIONING"
           },
           {
             "id": 566,
@@ -6180,6 +6442,78 @@
             "target_id": -20,
             "target_slot": 2,
             "type": "AUDIO"
+          },
+          {
+            "id": 100016,
+            "origin_id": 285,
+            "origin_slot": 0,
+            "target_id": 334,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 100017,
+            "origin_id": 334,
+            "origin_slot": 0,
+            "target_id": 335,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 100018,
+            "origin_id": 303,
+            "origin_slot": 0,
+            "target_id": 335,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 100019,
+            "origin_id": 313,
+            "origin_slot": 0,
+            "target_id": 335,
+            "target_slot": 2,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 100020,
+            "origin_id": 279,
+            "origin_slot": 0,
+            "target_id": 335,
+            "target_slot": 4,
+            "type": "VAE"
+          },
+          {
+            "id": 100021,
+            "origin_id": -10,
+            "origin_slot": 14,
+            "target_id": 335,
+            "target_slot": 3,
+            "type": "AUDIO"
+          },
+          {
+            "id": 100022,
+            "origin_id": 335,
+            "origin_slot": 1,
+            "target_id": 304,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 100023,
+            "origin_id": 335,
+            "origin_slot": 2,
+            "target_id": 304,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 100024,
+            "origin_id": 335,
+            "origin_slot": 0,
+            "target_id": 314,
+            "target_slot": 0,
+            "type": "MODEL"
           }
         ],
         "extra": {

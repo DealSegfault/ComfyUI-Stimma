@@ -253,6 +253,33 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
                 "max-items": max_videos,
             },
         )
+    elif class_type == "StimmaAudioParam":
+        control = _norm_control(inputs.get("ui_control", "audio_picker"))
+        required = bool(inputs.get("required", True))
+        return ToolParameter(
+            name="input_audios",
+            type="array",
+            description="",
+            required=required,
+            items={"type": "string"},
+            ui_hints={
+                "control": control,
+                "min-items": 1 if required else 0,
+                "max-items": 1,
+                "label": inputs.get("ui_label") or "Audio",
+                "audio-role": inputs.get("audio_role") or "driving",
+                # ComfyUI decodes audio through av, so we accept the common
+                # containers directly and only ask the host to convert what it
+                # can't. WAV is the lossless target, so an mp3 source is never
+                # re-compressed a second time.
+                "accept-media": {
+                    "mime_types": [
+                        "audio/wav", "audio/mpeg", "audio/mp4", "audio/flac", "audio/ogg",
+                    ],
+                    "transcode_to": "audio/wav",
+                },
+            },
+        )
     elif class_type == "StimmaSeedParam":
         return ToolParameter(
             name=name,
@@ -618,13 +645,13 @@ def _merge_media_parameters(params: List[ToolParameter]) -> List[ToolParameter]:
     passthrough: List[ToolParameter] = []
 
     for p in params:
-        if p.name in ("input_images", "input_videos"):
+        if p.name in ("input_images", "input_videos", "input_audios"):
             grouped.setdefault(p.name, []).append(p)
         else:
             passthrough.append(p)
 
     merged: List[ToolParameter] = []
-    for name in ("input_images", "input_videos"):
+    for name in ("input_images", "input_videos", "input_audios"):
         items = grouped.get(name, [])
         if not items:
             continue
@@ -637,27 +664,41 @@ def _merge_media_parameters(params: List[ToolParameter]) -> List[ToolParameter]:
         controls = []
         controlnet_types = []
         allow_prep = False
+        accept_media = None
+        label = None
+        audio_role = None
         for p in items:
             hints = p.ui_hints or {}
+            audio_role = audio_role or hints.get("audio-role")
             mins.append(int(hints.get("min-items", 1)))
             maxs.append(int(hints.get("max-items", 1)))
             controls.append(hints.get("control"))
             allow_prep = allow_prep or bool(hints.get("allow-prep"))
+            accept_media = accept_media or hints.get("accept-media")
+            label = label or hints.get("label")
             for ctype in hints.get("controlnet", []) or []:
                 if ctype not in controlnet_types:
                     controlnet_types.append(ctype)
 
         if name == "input_images":
             control = "video_frame_picker" if "video_frame_picker" in controls else "image_picker"
+        elif name == "input_audios":
+            control = "audio_picker"
         else:
             control = "video_picker"
 
         # Images are a single multi-upload field ("1 primary + optional extras"),
         # so min is max(mins). Video params are distinct positional slots; a stitch
         # needs at least two clips but accepts up to the number of slots, so min is 2
-        # and max is the slot count (sum of per-node maxes).
-        min_items = 2 if name == "input_videos" and len(items) >= 2 else (
-            sum(mins) if name == "input_videos" else max(mins))
+        # and max is the slot count (sum of per-node maxes). Audio params are
+        # positional slots too (a driving track and a voice reference are different
+        # inputs), but every declared slot is meant, so min is the sum.
+        if name == "input_videos":
+            min_items = 2 if len(items) >= 2 else sum(mins)
+        elif name == "input_audios":
+            min_items = sum(mins)
+        else:
+            min_items = max(mins)
 
         merged.append(
             ToolParameter(
@@ -672,6 +713,9 @@ def _merge_media_parameters(params: List[ToolParameter]) -> List[ToolParameter]:
                     "max-items": sum(maxs),
                     **({"controlnet": controlnet_types} if controlnet_types and name == "input_images" else {}),
                     **({"allow-prep": True} if allow_prep else {}),
+                    **({"accept-media": accept_media} if accept_media else {}),
+                    **({"label": label} if label else {}),
+                    **({"audio-role": audio_role} if audio_role else {}),
                 },
             )
         )

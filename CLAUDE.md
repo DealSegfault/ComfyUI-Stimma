@@ -72,6 +72,7 @@ Protocol reference: https://github.com/stimma-ai/stimma-tools-protocol
 | `StimmaPromptParam` | Text prompt | `name`, `default_text`, `required` |
 | `StimmaImageParam` | Image upload | `name`, `required` |
 | `StimmaVideoParam` | Video upload | `name`, `required` |
+| `StimmaAudioParam` | Audio upload (audio-conditioned tools) | `required`, `ui_label`, `audio_role` (`driving`/`reference`) |
 | `StimmaMaskParam` | Mask editor | `name`, `source_image_field` |
 | `StimmaResolutionParam` | Width/height | `width`, `height`, `step`, `supported_resolutions` |
 | `StimmaSeedParam` | Random seed | `name` |
