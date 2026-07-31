@@ -348,9 +348,13 @@ def _build_param_parameter(
     name = inputs.get("name", "")
 
     _ACRONYMS = {"cfg"}
+    # A trailing _pct marks the unit for the wire, where a bare `expand_top`
+    # would be ambiguous. The label is not the wire — it sits next to a value
+    # already rendered as "25%", so repeating it reads as "Expand Top Pct".
+    label_source = name[:-4] if name.endswith("_pct") else name
     label = " ".join(
         w.upper() if w.lower() in _ACRONYMS else w.capitalize()
-        for w in name.replace("_", " ").split()
+        for w in label_source.replace("_", " ").split()
     )
 
     if class_type == "StimmaIntParam":
