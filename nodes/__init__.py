@@ -25,6 +25,7 @@ from .checkpoints import StimmaCheckpointLoader
 from .outputs import StimmaImageOutput, StimmaVideoOutput
 from .layout import StimmaLayoutGroup
 from .stitch_assembler import StimmaVideoStitchAssembler
+from .outpaint import StimmaOutpaintPadding
 
 NODE_CLASS_MAPPINGS = {
     "StimmaToolInfo": StimmaToolInfo,
@@ -50,6 +51,7 @@ NODE_CLASS_MAPPINGS = {
     "StimmaVideoOutput": StimmaVideoOutput,
     "StimmaLayoutGroup": StimmaLayoutGroup,
     "StimmaVideoStitchAssembler": StimmaVideoStitchAssembler,
+    "StimmaOutpaintPadding": StimmaOutpaintPadding,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -76,4 +78,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "StimmaVideoOutput": "Stimma Video Output",
     "StimmaLayoutGroup": "Stimma Layout Group",
     "StimmaVideoStitchAssembler": "Stimma Video Stitch Assembler",
+    "StimmaOutpaintPadding": "Stimma Outpaint Padding",
 }

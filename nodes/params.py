@@ -16,6 +16,10 @@ class StimmaIntParam:
                 "ui_control": (["input", "slider", "upscale_resolution"],),
                 "ui_order": ("INT", {"default": 0, "min": 0, "max": 2147483647, "display": "number"}),
                 "ui_description": ("STRING", {"default": "", "multiline": True}),
+                # Appended last on purpose: widgets_values is positional, so a
+                # new field anywhere else would shift every saved workflow's
+                # values by one. Older workflows simply omit it and get "".
+                "ui_format": (["", "percent", "seconds"],),
             },
         }
 
@@ -24,7 +28,7 @@ class StimmaIntParam:
     FUNCTION = "execute"
     CATEGORY = "Stimma/Params"
 
-    def execute(self, name, value, minimum, maximum, step, ui_control, ui_order, ui_description):
+    def execute(self, name, value, minimum, maximum, step, ui_control, ui_order, ui_description, ui_format=""):
         return (value,)
 
 

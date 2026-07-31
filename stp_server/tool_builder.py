@@ -355,6 +355,9 @@ def _build_param_parameter(
 
     if class_type == "StimmaIntParam":
         ui_control = inputs.get("ui_control", "input")
+        # A bare number whose unit the user has to guess is a broken control, so
+        # the format hint rides through to `x-format` and the host renders "25%".
+        ui_format = inputs.get("ui_format") or ""
         return ToolParameter(
             name=name,
             type="integer",
@@ -367,6 +370,7 @@ def _build_param_parameter(
                 "control": ui_control,
                 "step": inputs.get("step", 1),
                 "label": label,
+                **({"format": ui_format} if ui_format else {}),
             },
         )
     elif class_type == "StimmaFloatParam":
