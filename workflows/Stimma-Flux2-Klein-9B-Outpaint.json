@@ -267,7 +267,7 @@
       },
       "widgets_values": [
         "mask_feather",
-        40,
+        64,
         0,
         128,
         1,
@@ -1016,7 +1016,7 @@
       },
       "widgets_values": [
         "lanczos",
-        1.5,
+        2.0,
         1
       ],
       "title": "To model budget"
