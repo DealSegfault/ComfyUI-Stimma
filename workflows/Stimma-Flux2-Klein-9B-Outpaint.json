@@ -974,7 +974,7 @@
         "Node name for S&R": "DrawMaskOnImage"
       },
       "widgets_values": [
-        "#00FF00",
+        "0, 255, 0",
         "cpu"
       ],
       "title": "Fill new area"
