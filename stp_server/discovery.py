@@ -306,10 +306,15 @@ def _get_group_name(node_type: str) -> str:
 
 def _is_connection_type(inp_type: Any) -> bool:
     """Check if an input type is a connection type (MODEL, CLIP, IMAGE, etc.)."""
+    widget_types = {"INT", "FLOAT", "STRING", "BOOLEAN", "COMBO"}
+    if isinstance(inp_type, str) and "," in inp_type:
+        union_types = {part.strip() for part in inp_type.split(",")}
+        if union_types and union_types.issubset(widget_types):
+            return False
     return (
         isinstance(inp_type, str)
         and inp_type.isupper()
-        and inp_type not in ("INT", "FLOAT", "STRING", "BOOLEAN", "COMBO")
+        and inp_type not in widget_types
     )
 
 
