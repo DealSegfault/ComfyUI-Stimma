@@ -241,7 +241,7 @@
       "title": "Note: MiniMax H3",
       "properties": {},
       "widgets_values": [
-        "## MiniMax H3\n\n[MiniMax H3](https://www.minimax.io/blog/minimax-h3) is MiniMax's general-purpose, omni-modal generation model. It jointly understands text, image, video, and audio, and generates video with **native stereo audio**: voice, sound effects, and music are modeled jointly in a single forward pass, not layered on afterward. Output is up to 2K resolution, 24fps, and up to about 15 seconds.\n\n## ComfyUI links\n- [ComfyUI#15224](https://github.com/Comfy-Org/ComfyUI/pull/15224)\n- [\ud83e\udd17 Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3)\n\n## About this workflow\n\n**Key inputs**\n\n- **prompt**: describe the shots, camera moves, and the accompanying audio (dialogue, SFX, music) in one block\n- **width / height**: set via Resolution Selector. H3's native canvas is a 768px short edge, capped at 768x1344 pixels, rounded to a multiple of 32\n- **duration (seconds)**: converted to a valid frame `length` by the Math Expression node, snapping up to the model's 17-frame-per-block (17k+5) grid at 24fps\n"
+        "## MiniMax H3\n\n[MiniMax H3](https://www.minimax.io/blog/minimax-h3) is MiniMax's general-purpose, omni-modal generation model. It jointly understands text, image, video, and audio, and generates video with **native stereo audio**: voice, sound effects, and music are modeled jointly in a single forward pass, not layered on afterward. Output is up to 2K resolution, 24fps, and up to about 15 seconds.\n\n## ComfyUI links\n- [ComfyUI#15224](https://github.com/Comfy-Org/ComfyUI/pull/15224)\n- [🤗 Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3)\n\n## About this workflow\n\n**Key inputs**\n\n- **prompt**: describe the shots, camera moves, and the accompanying audio (dialogue, SFX, music) in one block\n- **width / height**: set via Resolution Selector. H3's native canvas is a 768px short edge, capped at 768x1344 pixels, rounded to a multiple of 32\n- **duration (seconds)**: converted to a valid frame `length` by the Math Expression node, snapping up to the model's 17-frame-per-block (17k+5) grid at 24fps\n"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -265,7 +265,7 @@
       "title": "Note: Model Links",
       "properties": {},
       "widgets_values": [
-        "## Model Links\n\n**vae**\n\n- [minimax_h3_video_vae_fp16.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors)\n- [minimax_h3_audio_vae_fp32.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors)\n\n**diffusion_models**\n\n- [minimax_h3_fl2va_pruned_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors)\n\n**text_encoders**\n\n- [qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors)\n\n\n## Model Storage Location\n\n```\n\ud83d\udcc2 ComfyUI/\n\u251c\u2500\u2500 \ud83d\udcc2 models/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc2 vae/\n\u2502   \u2502   \u251c\u2500\u2500 minimax_h3_video_vae_fp16.safetensors\n\u2502   \u2502   \u2514\u2500\u2500 minimax_h3_audio_vae_fp32.safetensors\n\u2502   \u251c\u2500\u2500 \ud83d\udcc2 diffusion_models/\n\u2502   \u2502   \u2514\u2500\u2500 minimax_h3_fl2va_pruned_fp8_scaled.safetensors\n\u2502   \u2514\u2500\u2500 \ud83d\udcc2 text_encoders/\n\u2502       \u2514\u2500\u2500 qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/comfyanonymous/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
+        "## Model Links\n\n**vae**\n\n- [minimax_h3_video_vae_fp16.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors)\n- [minimax_h3_audio_vae_fp32.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors)\n\n**diffusion_models**\n\n- [minimax_h3_fl2va_pruned_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors)\n\n**text_encoders**\n\n- [qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors)\n\n\n## Model Storage Location\n\n```\n📂 ComfyUI/\n├── 📂 models/\n│   ├── 📂 vae/\n│   │   ├── minimax_h3_video_vae_fp16.safetensors\n│   │   └── minimax_h3_audio_vae_fp32.safetensors\n│   ├── 📂 diffusion_models/\n│   │   └── minimax_h3_fl2va_pruned_fp8_scaled.safetensors\n│   └── 📂 text_encoders/\n│       └── qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/comfyanonymous/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -716,9 +716,9 @@
       },
       "widgets_values": [
         "duration",
-        5.0,
-        1.0,
-        15.0,
+        5,
+        1,
+        15,
         0.5,
         "slider",
         20,
@@ -1345,8 +1345,8 @@
         "version": 1,
         "state": {
           "lastGroupId": 4,
-          "lastNodeId": 118,
-          "lastLinkId": 233,
+          "lastNodeId": 121,
+          "lastLinkId": 240,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -1412,7 +1412,9 @@
             "name": "width",
             "type": "INT",
             "linkIds": [
-              200
+              200,
+              235,
+              238
             ],
             "pos": [
               -2456,
@@ -1424,7 +1426,9 @@
             "name": "height",
             "type": "INT",
             "linkIds": [
-              201
+              201,
+              236,
+              239
             ],
             "pos": [
               -2456,
@@ -2024,8 +2028,7 @@
                 "name": "MODEL",
                 "type": "MODEL",
                 "links": [
-                  5,
-                  193
+                  234
                 ]
               }
             ],
@@ -2217,14 +2220,14 @@
                 "name": "first_frame",
                 "shape": 7,
                 "type": "IMAGE",
-                "link": 195
+                "link": 237
               },
               {
                 "localized_name": "last_frame",
                 "name": "last_frame",
                 "shape": 7,
                 "type": "IMAGE",
-                "link": 196
+                "link": 240
               },
               {
                 "localized_name": "prompt",
@@ -2395,6 +2398,150 @@
             "widgets_values": [
               2
             ]
+          },
+          {
+            "id": 119,
+            "type": "StimmaMiniMaxH3SageAttention",
+            "pos": [
+              -1340,
+              4520
+            ],
+            "size": [
+              410,
+              60
+            ],
+            "flags": {},
+            "order": 15,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 234
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "links": [
+                  5,
+                  193
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaMiniMaxH3SageAttention"
+            },
+            "widgets_values": []
+          },
+          {
+            "id": 120,
+            "type": "StimmaOptionalImageCoverCrop",
+            "pos": [
+              -1770,
+              4650
+            ],
+            "size": [
+              360,
+              110
+            ],
+            "flags": {},
+            "order": 16,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "width",
+                "name": "width",
+                "type": "INT",
+                "link": 235
+              },
+              {
+                "localized_name": "height",
+                "name": "height",
+                "type": "INT",
+                "link": 236
+              },
+              {
+                "localized_name": "image",
+                "name": "image",
+                "type": "IMAGE",
+                "shape": 7,
+                "link": 195
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "image",
+                "name": "image",
+                "type": "IMAGE",
+                "links": [
+                  237
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaOptionalImageCoverCrop"
+            },
+            "widgets_values": [
+              1344,
+              768
+            ]
+          },
+          {
+            "id": 121,
+            "type": "StimmaOptionalImageCoverCrop",
+            "pos": [
+              -1770,
+              4810
+            ],
+            "size": [
+              360,
+              110
+            ],
+            "flags": {},
+            "order": 17,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "width",
+                "name": "width",
+                "type": "INT",
+                "link": 238
+              },
+              {
+                "localized_name": "height",
+                "name": "height",
+                "type": "INT",
+                "link": 239
+              },
+              {
+                "localized_name": "image",
+                "name": "image",
+                "type": "IMAGE",
+                "shape": 7,
+                "link": 196
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "image",
+                "name": "image",
+                "type": "IMAGE",
+                "links": [
+                  240
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaOptionalImageCoverCrop"
+            },
+            "widgets_values": [
+              1344,
+              768
+            ]
           }
         ],
         "groups": [
@@ -2466,7 +2613,7 @@
           },
           {
             "id": 5,
-            "origin_id": 6,
+            "origin_id": 119,
             "origin_slot": 0,
             "target_id": 9,
             "target_slot": 0,
@@ -2514,7 +2661,7 @@
           },
           {
             "id": 193,
-            "origin_id": 6,
+            "origin_id": 119,
             "origin_slot": 0,
             "target_id": 16,
             "target_slot": 0,
@@ -2572,7 +2719,7 @@
             "id": 195,
             "origin_id": -10,
             "origin_slot": 0,
-            "target_id": 104,
+            "target_id": 120,
             "target_slot": 2,
             "type": "IMAGE"
           },
@@ -2580,8 +2727,8 @@
             "id": 196,
             "origin_id": -10,
             "origin_slot": 1,
-            "target_id": 104,
-            "target_slot": 3,
+            "target_id": 121,
+            "target_slot": 2,
             "type": "IMAGE"
           },
           {
@@ -2735,6 +2882,62 @@
             "target_id": -20,
             "target_slot": 2,
             "type": "AUDIO"
+          },
+          {
+            "id": 234,
+            "origin_id": 6,
+            "origin_slot": 0,
+            "target_id": 119,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 235,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 120,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 236,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 120,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 237,
+            "origin_id": 120,
+            "origin_slot": 0,
+            "target_id": 104,
+            "target_slot": 2,
+            "type": "IMAGE"
+          },
+          {
+            "id": 238,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 121,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 239,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 121,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 240,
+            "origin_id": 121,
+            "origin_slot": 0,
+            "target_id": 104,
+            "target_slot": 3,
+            "type": "IMAGE"
           }
         ],
         "extra": {}
