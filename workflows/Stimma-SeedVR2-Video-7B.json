@@ -2,7 +2,7 @@
   "id": "e2c8e6ec-9e8a-4a81-a240-7e7d2befc2bf",
   "revision": 0,
   "last_node_id": 33,
-  "last_link_id": 31,
+  "last_link_id": 32,
   "nodes": [
     {
       "id": 19,
@@ -684,6 +684,14 @@
             31
           ],
           "slot_index": 1
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            32
+          ],
+          "slot_index": 2
         }
       ],
       "properties": {
@@ -981,6 +989,19 @@
           "link": null
         },
         {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 32
+        },
+        {
+          "name": "generate_audio",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "generate_audio"
+          },
+          "link": null
+        },
+        {
           "name": "_stimma_output_dir",
           "type": "STRING",
           "widget": {
@@ -997,6 +1018,7 @@
       "widgets_values": [
         24,
         "Stimma",
+        true,
         ""
       ]
     },
@@ -1140,6 +1162,14 @@
       32,
       1,
       "INT"
+    ],
+    [
+      32,
+      26,
+      2,
+      32,
+      3,
+      "AUDIO"
     ]
   ],
   "groups": [
