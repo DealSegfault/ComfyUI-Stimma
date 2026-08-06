@@ -22,7 +22,11 @@ config_module = types.ModuleType("stp_server.config")
 config_module.Config = type("Config", (), {})
 sys.modules["stp_server.config"] = config_module
 
-from stp_server.discovery import DiscoveredWorkflow
+from stp_server.discovery import (
+    DiscoveredWorkflow,
+    _convert_ui_to_api,
+    _extract_stimma_nodes,
+)
 from stp_server.tool_builder import _build_single_tool
 
 
@@ -85,6 +89,79 @@ class TestReferenceToVideoDescriptor(unittest.TestCase):
         self.assertEqual(schema["properties"]["input_audios"]["x-max-items"], 2)
         self.assertIn("immediately before", schema["properties"]["input_videos"]["description"])
         self.assertIn("Numbered after", schema["properties"]["input_audios"]["description"])
+
+
+class TestSavedStimmaWidgetCompatibility(unittest.TestCase):
+    def test_new_widget_does_not_shift_legacy_image_param_values(self):
+        workflow = {
+            "nodes": [
+                {
+                    "id": 1,
+                    "type": "StimmaToolInfo",
+                    "inputs": [
+                        {"name": "slug", "widget": {"name": "slug"}, "link": None},
+                        {"name": "display_name", "widget": {"name": "display_name"}, "link": None},
+                        {"name": "task_types", "widget": {"name": "task_types"}, "link": None},
+                    ],
+                    "widgets_values": ["legacy-i2v", "Legacy I2V", "image-to-video"],
+                },
+                {
+                    "id": 2,
+                    "type": "StimmaImageParam",
+                    "inputs": [
+                        {"name": "image", "widget": {"name": "image"}, "link": None},
+                        {"name": "controlnet_types", "widget": {"name": "controlnet_types"}, "link": None},
+                        {"name": "ui_control", "widget": {"name": "ui_control"}, "link": None},
+                        {"name": "ui_order", "widget": {"name": "ui_order"}, "link": None},
+                        {"name": "allow_prep", "widget": {"name": "allow_prep"}, "link": None},
+                    ],
+                    "widgets_values": ["example.png", "", "video_frame_picker", 5, True],
+                },
+                {
+                    "id": 3,
+                    "type": "StimmaImageParam",
+                    "inputs": [
+                        {"name": "image", "widget": {"name": "image"}, "link": None},
+                        {"name": "controlnet_types", "widget": {"name": "controlnet_types"}, "link": None},
+                        {"name": "ui_control", "widget": {"name": "ui_control"}, "link": None},
+                        {"name": "ui_order", "widget": {"name": "ui_order"}, "link": None},
+                        {"name": "allow_prep", "widget": {"name": "allow_prep"}, "link": None},
+                    ],
+                    "widgets_values": ["example.png", "", "video_frame_picker", 6, True],
+                },
+            ],
+            "links": [],
+        }
+        object_info = {
+            "StimmaToolInfo": {"input": {"required": {
+                "slug": ("STRING", {}),
+                "display_name": ("STRING", {}),
+                "task_types": ("STRING", {}),
+            }}},
+            "StimmaImageParam": {"input": {"required": {
+                "image": (["example.png"],),
+                "required": ("BOOLEAN", {"default": True}),
+                "controlnet_types": ("STRING", {}),
+                "ui_control": (["image_picker", "video_frame_picker"],),
+                "ui_order": ("INT", {}),
+                "allow_prep": ("BOOLEAN", {}),
+            }}},
+        }
+
+        api_prompt = _convert_ui_to_api(workflow, object_info)
+        self.assertEqual(api_prompt["2"]["inputs"]["ui_control"], "video_frame_picker")
+        self.assertEqual(api_prompt["2"]["inputs"]["ui_order"], 5)
+        self.assertNotIn("required", api_prompt["2"]["inputs"])
+
+        extracted = _extract_stimma_nodes(api_prompt)
+        image_fields = [
+            node for node in extracted["field_nodes"]
+            if node["class_type"] == "StimmaImageParam"
+        ]
+        self.assertEqual(
+            [(node["inputs"]["required"], node["inputs"]["ui_order"]) for node in image_fields],
+            [(True, 5), (False, 6)],
+        )
 
 
 class TestReferenceToVideoWorkflow(unittest.TestCase):

@@ -418,6 +418,26 @@ def _convert_inner_node_widgets(
     }
 
     specs = _get_input_specs(class_type, object_info)
+    if class_type in ALL_STIMMA_TYPES:
+        # Stimma workflows persist each widget's name alongside its positional
+        # value. Prefer that saved order over today's object_info order so
+        # adding a new widget cannot reinterpret every older value after it.
+        # (This is especially important for media controls: a shifted
+        # video_frame_picker can leave its old state hidden while the payload
+        # builder continues to submit it.)
+        specs_by_name = dict(specs)
+        saved_widget_names = [
+            inp.get("name")
+            for inp in node_inputs
+            if inp.get("name") and inp.get("widget")
+        ]
+        named_specs = [
+            (name, specs_by_name[name])
+            for name in saved_widget_names
+            if name in specs_by_name
+        ]
+        if named_specs:
+            specs = named_specs
     _CAG_STRINGS = frozenset(("randomize", "fixed", "increment", "decrement"))
 
     def _consume(inp_name, inp_spec):
@@ -1538,6 +1558,20 @@ def _extract_stimma_nodes(api_prompt: Dict[str, Any]) -> Optional[Dict[str, Any]
     layout_nodes.sort(key=_order_key)
     lora_nodes.sort(key=_order_key)
     checkpoint_nodes.sort(key=_order_key)
+
+    # Backward compatibility for workflows saved before ImageParam and
+    # VideoParam had an explicit `required` widget. Their established contract
+    # was positional: the first slot of each media kind was required and later
+    # slots were optional. Preserve that contract rather than treating a newly
+    # added widget's default as authoritative for an older saved graph.
+    legacy_media_seen = {"input_images": 0, "input_videos": 0}
+    for node in field_nodes:
+        name = node.get("name")
+        if name not in legacy_media_seen:
+            continue
+        if "required" not in node["inputs"]:
+            node["inputs"]["required"] = legacy_media_seen[name] == 0
+        legacy_media_seen[name] += 1
 
     # Resolve StimmaDropdownParam connections: find the target ComfyUI node
     # and input name so tool_builder can look up the enum from object_info.
