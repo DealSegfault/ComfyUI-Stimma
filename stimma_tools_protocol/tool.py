@@ -16,6 +16,7 @@ STANDARD_TASK_TYPES = [
     "text-to-image",
     "image-to-image",
     "image-to-video",
+    "reference-to-video",
     "text-to-video",
     "video-to-video",
     "video-stitch",
@@ -128,6 +129,10 @@ class Tool:
     task_types: List[str] = field(default_factory=list)
     model_vendor: Optional[str] = None
     model: Optional[str] = None
+    # Cross-field JSON Schema alternatives. Each inner list becomes one
+    # {"required": [...]} branch under parameter_schema.anyOf.
+    # Cross-field alternatives; array fields are also constrained non-empty.
+    required_any: Optional[List[List[str]]] = None
 
     def __post_init__(self):
         if not self.task_types and self.task_type:
@@ -146,6 +151,21 @@ class Tool:
         parameter_schema = {"type": "object", "properties": param_properties}
         if param_required:
             parameter_schema["required"] = param_required
+        if self.required_any:
+            branches = []
+            for fields in self.required_any:
+                if not fields:
+                    continue
+                branch = {"required": fields}
+                array_fields = {
+                    name: {"minItems": 1}
+                    for name in fields
+                    if param_properties.get(name, {}).get("type") == "array"
+                }
+                if array_fields:
+                    branch["properties"] = array_fields
+                branches.append(branch)
+            parameter_schema["anyOf"] = branches
 
         # Output schema (standard: list of produced assets)
         output_schema = {

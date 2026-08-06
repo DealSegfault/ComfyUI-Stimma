@@ -55,6 +55,7 @@ class StimmaImageParam:
         return {
             "required": {
                 "image": (files, {"image_upload": True}),
+                "required": ("BOOLEAN", {"default": True}),
                 "controlnet_types": ("STRING", {"default": "", "multiline": False}),
                 "ui_control": (["image_picker", "video_frame_picker"],),
                 "ui_order": ("INT", {"default": 0, "min": 0, "max": 100}),
@@ -72,7 +73,7 @@ class StimmaImageParam:
     FUNCTION = "execute"
     CATEGORY = "Stimma/Params"
 
-    def execute(self, image, controlnet_types="", ui_control="image_picker", ui_order=0,
+    def execute(self, image, required=True, controlnet_types="", ui_control="image_picker", ui_order=0,
                 allow_prep=True):
         image_path = folder_paths.get_annotated_filepath(image)
         img = Image.open(image_path)
@@ -329,8 +330,10 @@ class StimmaVideoParam:
         return {
             "required": {
                 "video": (files,),
+                "required": ("BOOLEAN", {"default": True}),
                 "ui_control": (["video_picker"],),
                 "ui_order": ("INT", {"default": 0, "min": 0, "max": 100}),
+                "target_fps": ("INT", {"default": 0, "min": 0, "max": 240}),
             },
         }
 
@@ -339,7 +342,8 @@ class StimmaVideoParam:
     FUNCTION = "execute"
     CATEGORY = "Stimma/Params"
 
-    def execute(self, video, ui_control, ui_order):
+    def execute(self, video, required=True, ui_control="video_picker", ui_order=0,
+                target_fps=0):
         import torch
 
         video_path = folder_paths.get_annotated_filepath(video)
@@ -375,16 +379,29 @@ class StimmaVideoParam:
             frames_tensor = torch.from_numpy(image_np)[None,]
             source_fps = 30
 
+        # Some models assign timestamps from a fixed frame rate rather than
+        # accepting FPS as a separate input (MiniMax H3 reference video uses
+        # 24 fps). Opt in per workflow; zero preserves legacy behavior.
+        target_fps = int(target_fps or 0)
+        if target_fps > 0 and source_fps > 0 and target_fps != source_fps:
+            source_count = frames_tensor.shape[0]
+            target_count = max(1, int(round(source_count * target_fps / source_fps)))
+            indices = torch.linspace(0, source_count - 1, target_count).round().long()
+            frames_tensor = frames_tensor[indices]
+            source_fps = target_fps
+
         duration_s = frames_tensor.shape[0] / float(source_fps)
         audio = _load_video_audio(video_path, fallback_duration_s=duration_s)
         return (frames_tensor, source_fps, audio)
 
     @classmethod
-    def IS_CHANGED(cls, video, ui_control="video_picker", ui_order=0, **kwargs):
+    def IS_CHANGED(cls, video, required=True, ui_control="video_picker", ui_order=0,
+                   target_fps=0, **kwargs):
         return _safe_mtime_from_annotated(video)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, video, ui_control="video_picker", ui_order=0, **kwargs):
+    def VALIDATE_INPUTS(cls, video, required=True, ui_control="video_picker", ui_order=0,
+                        target_fps=0, **kwargs):
         # Mirror StimmaImageParam: validate the uploaded file exists rather than
         # relying on ComfyUI's COMBO "value in list" check, which snapshots the
         # input directory listing and rejects freshly-uploaded videos.
@@ -419,7 +436,7 @@ class StimmaVideosParam:
 
     def execute(self, video, min_videos, max_videos, ui_control, ui_order):
         # Same placeholder behavior as StimmaVideoParam.
-        return StimmaVideoParam().execute(video, ui_control, ui_order)
+        return StimmaVideoParam().execute(video, ui_control=ui_control, ui_order=ui_order)
 
     @classmethod
     def IS_CHANGED(cls, video, min_videos=1, max_videos=3, ui_control="video_picker", ui_order=0, **kwargs):

@@ -140,6 +140,17 @@ class TestIsInputRequired(unittest.TestCase):
             _is_input_required("ReferenceLatent", "nonexistent", MOCK_OBJECT_INFO)
         )
 
+    def test_h3_expanded_reference_sockets_are_optional(self):
+        for name in (
+            "ref_images.ref_image_0",
+            "ref_videos.ref_video_1",
+            "ref_video_audios.ref_video_audio_1",
+            "ref_audios.ref_audio_2",
+        ):
+            self.assertFalse(
+                _is_input_required("MiniMaxH3ReferenceToVideo", name, {})
+            )
+
 
 class TestStripUnprovidedInputChains(unittest.TestCase):
     def _make_klein_prompt(self):
@@ -380,6 +391,52 @@ class TestInjectFieldsListHandling(unittest.TestCase):
             asyncio.get_event_loop().run_until_complete(
                 _inject_fields(prompt, wf, input_data, context, comfy)
             )
+
+    def test_reference_to_video_requires_at_least_one_typed_reference(self):
+        import asyncio
+
+        wf = MagicMock()
+        wf.tool_info = {"task_types": ["reference-to-video"]}
+        wf.field_nodes = []
+
+        with self.assertRaisesRegex(RuntimeError, "at least one reference"):
+            asyncio.get_event_loop().run_until_complete(
+                _inject_fields({}, wf, {}, MagicMock(), MagicMock())
+            )
+
+    def test_optional_image_and_video_slots_can_be_omitted(self):
+        import asyncio
+
+        wf = MagicMock()
+        wf.tool_info = {"task_types": ["reference-to-video"]}
+        wf.field_nodes = [
+            {
+                "node_id": "image",
+                "class_type": "StimmaImageParam",
+                "inputs": {"required": False},
+            },
+            {
+                "node_id": "video",
+                "class_type": "StimmaVideoParam",
+                "inputs": {"required": False},
+            },
+        ]
+        prompt = {
+            "image": {"class_type": "StimmaImageParam", "inputs": {}},
+            "video": {"class_type": "StimmaVideoParam", "inputs": {}},
+        }
+
+        omitted = asyncio.get_event_loop().run_until_complete(
+            _inject_fields(
+                prompt,
+                wf,
+                {"input_audios": ["reference.wav"]},
+                MagicMock(),
+                MagicMock(),
+            )
+        )
+
+        self.assertEqual(omitted, ["image", "video"])
 
 
 class TestReferenceChainExpansion(unittest.TestCase):

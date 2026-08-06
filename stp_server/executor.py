@@ -420,6 +420,12 @@ async def _inject_fields(
     elif not isinstance(audio_values, list):
         audio_values = [audio_values]
 
+    if "reference-to-video" in (workflow.tool_info.get("task_types", []) or []):
+        if not image_values and not video_values and not audio_values:
+            raise RuntimeError(
+                "Reference-to-video requires at least one reference image, video, or audio file"
+            )
+
     logger.warning(
         "Stimma input ingest: keys=%s input_images=%d input_media_ids=%d input_videos=%d input_video_media_ids=%d",
         sorted(list(input_data.keys())),
@@ -470,6 +476,7 @@ async def _inject_fields(
             continue
 
         if class_type == "StimmaImageParam":
+            is_required = bool(node.get("inputs", {}).get("required", True))
             max_items = 1
             consumed = image_values[image_cursor:image_cursor + max_items]
             image_cursor += len(consumed)
@@ -482,10 +489,8 @@ async def _inject_fields(
             )
 
             if not consumed:
-                if image_cursor == 0:
-                    # First node, no images at all — truly required
+                if is_required:
                     raise RuntimeError("Missing required input_images (expected at least 1 image)")
-                # Subsequent node with no images left — treat as optional
                 unprovided_node_ids.append(node_id)
                 continue
 
@@ -539,6 +544,7 @@ async def _inject_fields(
             continue
 
         if class_type == "StimmaVideoParam":
+            is_required = bool(node.get("inputs", {}).get("required", True))
             max_items = 1
             consumed = video_values[video_cursor:video_cursor + max_items]
             video_cursor += len(consumed)
@@ -551,7 +557,7 @@ async def _inject_fields(
             )
 
             if not consumed:
-                if video_cursor == 0:
+                if is_required:
                     raise RuntimeError("Missing required input_videos (expected at least 1 video)")
                 unprovided_node_ids.append(node_id)
                 continue
@@ -1151,6 +1157,14 @@ def _is_input_required(
 
     Returns True if the input is in the 'required' section (or unknown).
     """
+    # Comfy's Autogrow sockets are represented as dotted concrete names in a
+    # saved/API prompt, while object_info describes only the optional group.
+    # Treat H3's expanded reference sockets as optional or one absent slot would
+    # cascade-remove the conditioning node and the whole generation.
+    if class_type == "MiniMaxH3ReferenceToVideo" and input_name.startswith(
+        ("ref_images.", "ref_videos.", "ref_video_audios.", "ref_audios.")
+    ):
+        return False
     node_info = object_info.get(class_type, {})
     input_def = node_info.get("input", {})
 
@@ -1570,5 +1584,3 @@ async def _capture_from_history(
         f"output nodes={n_output_nodes}, expected_stimma_output_nodes={expected_str}). "
         f"Check that your workflow has a StimmaImageOutput or StimmaVideoOutput node."
     )
-
-

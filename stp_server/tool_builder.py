@@ -168,11 +168,12 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
             ui_hints={"control": "prompt_editor"},
         )
     elif class_type == "StimmaImageParam":
+        required = bool(inputs.get("required", True))
         control = _norm_control(inputs.get("ui_control", "image_picker"))
         controlnet_types = _parse_controlnet_types(inputs.get("controlnet_types", ""))
         ui_hints = {
             "control": control,
-            "min-items": 1,
+            "min-items": 1 if required else 0,
             "max-items": 1,
         }
         if controlnet_types:
@@ -185,7 +186,7 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
             name="input_images",
             type="array",
             description="",
-            required=True,
+            required=required,
             items={"type": "string"},
             ui_hints=ui_hints,
         )
@@ -225,15 +226,16 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
         )
     elif class_type == "StimmaVideoParam":
         control = _norm_control(inputs.get("ui_control", "video_picker"))
+        required = bool(inputs.get("required", True))
         return ToolParameter(
             name="input_videos",
             type="array",
             description="",
-            required=True,
+            required=required,
             items={"type": "string"},
             ui_hints={
                 "control": control,
-                "min-items": 1,
+                "min-items": 1 if required else 0,
                 "max-items": 1,
             },
         )
@@ -701,9 +703,7 @@ def _merge_media_parameters(params: List[ToolParameter]) -> List[ToolParameter]:
         # and max is the slot count (sum of per-node maxes). Audio params are
         # positional slots too (a driving track and a voice reference are different
         # inputs), but every declared slot is meant, so min is the sum.
-        if name == "input_videos":
-            min_items = 2 if len(items) >= 2 else sum(mins)
-        elif name == "input_audios":
+        if name in ("input_videos", "input_audios"):
             min_items = sum(mins)
         else:
             min_items = max(mins)
@@ -777,6 +777,33 @@ def _build_single_tool(
             else:
                 media_parameters.append(result)
     media_parameters = _merge_media_parameters(media_parameters)
+    if "reference-to-video" in (info.get("task_types", []) or []):
+        for parameter in media_parameters:
+            hints = parameter.ui_hints or {}
+            if parameter.name == "input_images":
+                hints.update({
+                    "label": "Reference Images",
+                })
+                parameter.description = (
+                    "Shown to the model as <Picture 1>, <Picture 2>, and so on, in this order."
+                )
+            elif parameter.name == "input_videos":
+                hints.update({
+                    "label": "Reference Videos",
+                })
+                parameter.description = (
+                    "Each soundtrack is <Audio N> immediately before its matching <Video N>; "
+                    "reordering this list changes both tags together."
+                )
+            elif parameter.name == "input_audios":
+                hints.update({
+                    "label": "Standalone Reference Audio",
+                    "audio-role": "reference",
+                })
+                parameter.description = (
+                    "Numbered after the reference-video soundtracks as <Audio N>."
+                )
+            parameter.ui_hints = hints
     # Build configurable parameters
     parameters = []
     for node in workflow.param_nodes:
@@ -825,6 +852,10 @@ def _build_single_tool(
         metadata=metadata,
         model_vendor=(info.get("model_vendor") or "").strip() or None,
         model=(info.get("model") or "").strip() or None,
+        required_any=(
+            [["input_images"], ["input_videos"], ["input_audios"]]
+            if "reference-to-video" in task_types else None
+        ),
     )
 
     return tool
