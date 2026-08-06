@@ -1763,8 +1763,8 @@
       "widgets_values": [
         "spectrum_blend",
         0.5,
-        0.0,
-        1.0,
+        0,
+        1,
         0.01,
         "slider",
         50,
@@ -1971,8 +1971,8 @@
       "widgets_values": [
         "spectrum_ridge",
         0.1,
-        0.0,
-        10.0,
+        0,
+        10,
         0.01,
         "slider",
         52,
@@ -2074,9 +2074,9 @@
       },
       "widgets_values": [
         "spectrum_window",
-        2.0,
-        1.0,
-        16.0,
+        2,
+        1,
+        16,
         0.05,
         "slider",
         53,
@@ -2179,8 +2179,8 @@
       "widgets_values": [
         "spectrum_flex_window",
         0.75,
-        0.0,
-        8.0,
+        0,
+        8,
         0.05,
         "slider",
         54,
@@ -3009,8 +3009,8 @@
         "version": 1,
         "state": {
           "lastGroupId": 5,
-          "lastNodeId": 121,
-          "lastLinkId": 251,
+          "lastNodeId": 122,
+          "lastLinkId": 253,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -3878,7 +3878,8 @@
                 "name": "CLIP",
                 "type": "CLIP",
                 "links": [
-                  189
+                  189,
+                  252
                 ]
               }
             ],
@@ -4218,7 +4219,7 @@
                 "localized_name": "model",
                 "name": "model",
                 "type": "MODEL",
-                "link": 234
+                "link": 253
               },
               {
                 "localized_name": "spectrum_enabled",
@@ -4440,6 +4441,301 @@
             "widgets_values": [
               1344,
               768
+            ]
+          },
+          {
+            "id": 122,
+            "type": "StimmaLoraLoader",
+            "pos": [
+              -1510,
+              4310
+            ],
+            "size": [
+              480,
+              805
+            ],
+            "flags": {},
+            "order": 15,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 234
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "link": 252
+              },
+              {
+                "localized_name": "path_filter",
+                "name": "path_filter",
+                "type": "STRING",
+                "widget": {
+                  "name": "path_filter",
+                  "config": {
+                    "default": "minimax-h3/**"
+                  }
+                },
+                "link": null
+              },
+              {
+                "localized_name": "ui_order",
+                "name": "ui_order",
+                "type": "INT",
+                "widget": {
+                  "name": "ui_order"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_1",
+                "name": "lora_1",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_1",
+                "name": "strength_1",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_2",
+                "name": "lora_2",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_2",
+                "name": "strength_2",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_3",
+                "name": "lora_3",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_3",
+                "name": "strength_3",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_4",
+                "name": "lora_4",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_4",
+                "name": "strength_4",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_5",
+                "name": "lora_5",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_5",
+                "name": "strength_5",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_6",
+                "name": "lora_6",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_6",
+                "name": "strength_6",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_7",
+                "name": "lora_7",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_7",
+                "name": "strength_7",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_8",
+                "name": "lora_8",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_8",
+                "name": "strength_8",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_9",
+                "name": "lora_9",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_9",
+                "name": "strength_9",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_10",
+                "name": "lora_10",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_10"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_10",
+                "name": "strength_10",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_10"
+                },
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  253
+                ]
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "slot_index": 1,
+                "links": []
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaLoraLoader"
+            },
+            "widgets_values": [
+              "minimax-h3/**",
+              24,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1
             ]
           }
         ],
@@ -4786,7 +5082,7 @@
             "id": 234,
             "origin_id": 6,
             "origin_slot": 0,
-            "target_id": 119,
+            "target_id": 122,
             "target_slot": 0,
             "type": "MODEL"
           },
@@ -4925,6 +5221,22 @@
             "target_id": 119,
             "target_slot": 11,
             "type": "BOOLEAN"
+          },
+          {
+            "id": 252,
+            "origin_id": 13,
+            "origin_slot": 0,
+            "target_id": 122,
+            "target_slot": 1,
+            "type": "CLIP"
+          },
+          {
+            "id": 253,
+            "origin_id": 122,
+            "origin_slot": 0,
+            "target_id": 119,
+            "target_slot": 0,
+            "type": "MODEL"
           }
         ],
         "extra": {}

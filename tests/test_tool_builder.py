@@ -219,6 +219,10 @@ class TestReferenceToVideoWorkflow(unittest.TestCase):
             node for node in workflow["nodes"]
             if node["type"] == "StimmaMiniMaxH3SageAttention"
         )
+        lora = next(
+            node for node in workflow["nodes"]
+            if node["type"] == "StimmaLoraLoader"
+        )
 
         parameter_nodes = {
             node["widgets_values"][0]: node
@@ -252,8 +256,13 @@ class TestReferenceToVideoWorkflow(unittest.TestCase):
         self.assertEqual(precision_link[1], parameter_nodes["model_precision"]["id"])
         self.assertEqual(precision_link[3], loader["id"])
 
+        lora_input_link = links[lora["inputs"][0]["link"]]
+        self.assertEqual(lora_input_link[1], loader["id"])
+        self.assertEqual(lora_input_link[3], lora["id"])
+        self.assertEqual(lora["widgets_values"][0], "minimax-h3/**")
+
         model_link = links[sage["inputs"][0]["link"]]
-        self.assertEqual(model_link[1], loader["id"])
+        self.assertEqual(model_link[1], lora["id"])
         self.assertEqual(model_link[3], sage["id"])
 
         consumer_types = {
