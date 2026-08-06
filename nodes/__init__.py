@@ -26,7 +26,7 @@ from .outputs import StimmaImageOutput, StimmaVideoOutput
 from .layout import StimmaLayoutGroup
 from .stitch_assembler import StimmaVideoStitchAssembler
 from .outpaint import StimmaOutpaintPadding
-from .minimax_h3_sage import StimmaMiniMaxH3SageAttention
+from .minimax_h3_sage import StimmaMiniMaxH3ModelLoader, StimmaMiniMaxH3SageAttention
 from .image_crop import StimmaOptionalImageCoverCrop
 
 NODE_CLASS_MAPPINGS = {
@@ -54,6 +54,7 @@ NODE_CLASS_MAPPINGS = {
     "StimmaLayoutGroup": StimmaLayoutGroup,
     "StimmaVideoStitchAssembler": StimmaVideoStitchAssembler,
     "StimmaOutpaintPadding": StimmaOutpaintPadding,
+    "StimmaMiniMaxH3ModelLoader": StimmaMiniMaxH3ModelLoader,
     "StimmaMiniMaxH3SageAttention": StimmaMiniMaxH3SageAttention,
     "StimmaOptionalImageCoverCrop": StimmaOptionalImageCoverCrop,
 }
@@ -83,6 +84,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "StimmaLayoutGroup": "Stimma Layout Group",
     "StimmaVideoStitchAssembler": "Stimma Video Stitch Assembler",
     "StimmaOutpaintPadding": "Stimma Outpaint Padding",
+    "StimmaMiniMaxH3ModelLoader": "Stimma MiniMax H3 Model Loader",
     "StimmaMiniMaxH3SageAttention": "Stimma MiniMax H3 SageAttention",
     "StimmaOptionalImageCoverCrop": "Stimma Optional Image Cover Crop",
 }

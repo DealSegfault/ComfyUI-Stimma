@@ -9,6 +9,36 @@ from comfy.patcher_extension import CallbacksMP
 logger = logging.getLogger(__name__)
 
 
+_H3_DIFFUSION_MODELS = {
+    "INT8 ConvRot": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+    "FP8": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+}
+
+
+class StimmaMiniMaxH3ModelLoader:
+    """Load a supported MiniMax H3 diffusion-model precision by friendly name."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"precision": (list(_H3_DIFFUSION_MODELS), {"default": "INT8 ConvRot"})}}
+
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "load"
+    CATEGORY = "Stimma/Optimization"
+
+    def load(self, precision):
+        import comfy.sd
+        import folder_paths
+
+        filename = _H3_DIFFUSION_MODELS.get(precision)
+        if filename is None:
+            choices = ", ".join(_H3_DIFFUSION_MODELS)
+            raise ValueError(f"Unsupported MiniMax H3 precision {precision!r}; expected one of: {choices}")
+
+        model_path = folder_paths.get_full_path_or_raise("diffusion_models", filename)
+        return (comfy.sd.load_diffusion_model(model_path, model_options={}),)
+
+
 class StimmaMiniMaxH3SageAttention:
     """Patch H3's imported attention aliases for one model execution.
 
@@ -21,7 +51,22 @@ class StimmaMiniMaxH3SageAttention:
 
     @classmethod
     def INPUT_TYPES(cls):
-        return {"required": {"model": ("MODEL",)}}
+        return {
+            "required": {"model": ("MODEL",)},
+            "optional": {
+                "spectrum_enabled": ("BOOLEAN", {"default": False}),
+                "blend_weight": ("FLOAT", {"default": 0.50, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "degree": ("INT", {"default": 4, "min": 1, "max": 16, "step": 1}),
+                "ridge_lambda": ("FLOAT", {"default": 0.10, "min": 0.0, "max": 10.0, "step": 0.01}),
+                "window_size": ("FLOAT", {"default": 2.0, "min": 1.0, "max": 16.0, "step": 0.05}),
+                "flex_window": ("FLOAT", {"default": 0.75, "min": 0.0, "max": 8.0, "step": 0.05}),
+                "warmup_steps": ("INT", {"default": 5, "min": 0, "max": 64, "step": 1}),
+                "tail_actual_steps": ("INT", {"default": 1, "min": 0, "max": 64, "step": 1}),
+                "max_history": ("INT", {"default": 8, "min": 2, "max": 64, "step": 1}),
+                "history_storage": (["system_ram", "vram"], {"default": "system_ram"}),
+                "spectrum_debug": ("BOOLEAN", {"default": False}),
+            },
+        }
 
     RETURN_TYPES = ("MODEL",)
     RETURN_NAMES = ("model",)
@@ -29,7 +74,21 @@ class StimmaMiniMaxH3SageAttention:
     CATEGORY = "Stimma/Optimization"
     EXPERIMENTAL = True
 
-    def patch(self, model):
+    def patch(
+        self,
+        model,
+        spectrum_enabled=False,
+        blend_weight=0.50,
+        degree=4,
+        ridge_lambda=0.10,
+        window_size=2.0,
+        flex_window=0.75,
+        warmup_steps=5,
+        tail_actual_steps=1,
+        max_history=8,
+        history_storage="system_ram",
+        spectrum_debug=False,
+    ):
         model_clone = model.clone()
         originals = {}
 
@@ -57,7 +116,36 @@ class StimmaMiniMaxH3SageAttention:
 
         model_clone.add_callback(CallbacksMP.ON_PRE_RUN, enable)
         model_clone.add_callback(CallbacksMP.ON_CLEANUP, disable)
+
+        if spectrum_enabled:
+            model_clone = _apply_spectrum(
+                model_clone,
+                blend_weight=blend_weight,
+                degree=degree,
+                ridge_lambda=ridge_lambda,
+                window_size=window_size,
+                flex_window=flex_window,
+                warmup_steps=warmup_steps,
+                tail_actual_steps=tail_actual_steps,
+                max_history=max_history,
+                history_storage=history_storage,
+                debug=spectrum_debug,
+            )
         return (model_clone,)
+
+
+def _apply_spectrum(model, **settings):
+    """Delegate to Spectrum when installed without making it a hard dependency."""
+    import nodes as comfy_nodes
+
+    spectrum_class = comfy_nodes.NODE_CLASS_MAPPINGS.get("SpectrumApplyMiniMaxH3")
+    if spectrum_class is None:
+        raise RuntimeError(
+            "MiniMax H3 Spectrum was enabled, but ComfyUI-Spectrum-MiniMax-H3 is not installed. "
+            "Install https://github.com/xmarre/ComfyUI-Spectrum-MiniMax-H3 or disable Spectrum."
+        )
+
+    return spectrum_class().apply(model=model, enabled=True, **settings)[0]
 
 
 @torch.compiler.disable()
@@ -132,9 +220,11 @@ def _attention_sage_fp8_safe(
 
 
 NODE_CLASS_MAPPINGS = {
+    "StimmaMiniMaxH3ModelLoader": StimmaMiniMaxH3ModelLoader,
     "StimmaMiniMaxH3SageAttention": StimmaMiniMaxH3SageAttention,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "StimmaMiniMaxH3ModelLoader": "Stimma MiniMax H3 Model Loader",
     "StimmaMiniMaxH3SageAttention": "Stimma MiniMax H3 SageAttention",
 }

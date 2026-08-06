@@ -1,8 +1,8 @@
 {
   "id": "e3f2b845-8f2c-4b5a-9caf-eac1029d3e7e",
   "revision": 0,
-  "last_node_id": 134,
-  "last_link_id": 241,
+  "last_node_id": 148,
+  "last_link_id": 253,
   "nodes": [
     {
       "id": 92,
@@ -180,6 +180,66 @@
             "name": "scheduler"
           },
           "link": 238
+        },
+        {
+          "name": "precision",
+          "type": "STRING",
+          "link": 242
+        },
+        {
+          "name": "spectrum_enabled",
+          "type": "BOOLEAN",
+          "link": 243
+        },
+        {
+          "name": "blend_weight",
+          "type": "FLOAT",
+          "link": 244
+        },
+        {
+          "name": "degree",
+          "type": "INT",
+          "link": 245
+        },
+        {
+          "name": "ridge_lambda",
+          "type": "FLOAT",
+          "link": 246
+        },
+        {
+          "name": "window_size",
+          "type": "FLOAT",
+          "link": 247
+        },
+        {
+          "name": "flex_window",
+          "type": "FLOAT",
+          "link": 248
+        },
+        {
+          "name": "warmup_steps",
+          "type": "INT",
+          "link": 249
+        },
+        {
+          "name": "tail_actual_steps",
+          "type": "INT",
+          "link": 250
+        },
+        {
+          "name": "max_history",
+          "type": "INT",
+          "link": 251
+        },
+        {
+          "name": "history_storage",
+          "type": "STRING",
+          "link": 252
+        },
+        {
+          "name": "spectrum_debug",
+          "type": "BOOLEAN",
+          "link": 253
         }
       ],
       "outputs": [
@@ -265,7 +325,7 @@
       "title": "Note: Model Links",
       "properties": {},
       "widgets_values": [
-        "## Model Links\n\n**vae**\n\n- [minimax_h3_video_vae_fp16.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors)\n- [minimax_h3_audio_vae_fp32.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors)\n\n**diffusion_models**\n\n- [minimax_h3_fl2va_pruned_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors)\n\n**text_encoders**\n\n- [qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors)\n\n\n## Model Storage Location\n\n```\n📂 ComfyUI/\n├── 📂 models/\n│   ├── 📂 vae/\n│   │   ├── minimax_h3_video_vae_fp16.safetensors\n│   │   └── minimax_h3_audio_vae_fp32.safetensors\n│   ├── 📂 diffusion_models/\n│   │   └── minimax_h3_fl2va_pruned_fp8_scaled.safetensors\n│   └── 📂 text_encoders/\n│       └── qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/comfyanonymous/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
+        "## Model Links\n\n**vae**\n\n- [minimax_h3_video_vae_fp16.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors)\n- [minimax_h3_audio_vae_fp32.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors)\n\n**diffusion_models**\n\n- [minimax_h3_fl2va_pruned_int8_convrot.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors) **(default)**\n- [minimax_h3_fl2va_pruned_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors)\n\n**text_encoders**\n\n- [qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors](https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors)\n\n\n## Model Storage Location\n\n```\n📂 ComfyUI/\n├── 📂 models/\n│   ├── 📂 vae/\n│   │   ├── minimax_h3_video_vae_fp16.safetensors\n│   │   └── minimax_h3_audio_vae_fp32.safetensors\n│   ├── 📂 diffusion_models/\n│   │   ├── minimax_h3_fl2va_pruned_int8_convrot.safetensors\n│   │   └── minimax_h3_fl2va_pruned_fp8_scaled.safetensors\n│   └── 📂 text_encoders/\n│       └── qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/comfyanonymous/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -459,7 +519,7 @@
         "minimax-h3-i2v",
         "MiniMax H3 Image to Video",
         "image-to-video",
-        "Open Weights\nNative Audio\nFirst + Last Frame",
+        "Open Weights\nNative Audio\nFirst + Last Frame\nINT8 Default",
         "Animate a first frame with MiniMax H3, optionally adding a last frame for endpoint control, with synchronized stereo audio.",
         "MiniMax",
         "MiniMax H3"
@@ -1470,6 +1530,1228 @@
         true,
         10
       ]
+    },
+    {
+      "id": 135,
+      "type": "StimmaDropdownParam",
+      "pos": [
+        200,
+        1500
+      ],
+      "size": [
+        384,
+        228
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "STRING",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "*",
+          "links": [
+            242
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaDropdownParam"
+      },
+      "widgets_values": [
+        "model_precision",
+        "INT8 ConvRot",
+        22,
+        "Diffusion-model precision. INT8 ConvRot is the default; FP8 is the quality-reference alternative."
+      ]
+    },
+    {
+      "id": 136,
+      "type": "StimmaBoolParam",
+      "pos": [
+        630,
+        1500
+      ],
+      "size": [
+        384,
+        180
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "BOOLEAN",
+          "links": [
+            243
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaBoolParam"
+      },
+      "widgets_values": [
+        "spectrum",
+        false,
+        23,
+        "Forecast selected H3 transformer steps for higher throughput. This approximate mode can change motion, fine detail, and audio."
+      ]
+    },
+    {
+      "id": 137,
+      "type": "StimmaFloatParam",
+      "pos": [
+        1060,
+        1500
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "FLOAT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "links": [
+            244
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaFloatParam"
+      },
+      "widgets_values": [
+        "spectrum_blend",
+        0.5,
+        0.0,
+        1.0,
+        0.01,
+        "slider",
+        50,
+        "Spectrum polynomial share; the remainder uses a local linear forecast."
+      ]
+    },
+    {
+      "id": 138,
+      "type": "StimmaIntParam",
+      "pos": [
+        1490,
+        1500
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "INT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "INT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "INT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            245
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaIntParam"
+      },
+      "widgets_values": [
+        "spectrum_degree",
+        4,
+        1,
+        16,
+        1,
+        "slider",
+        51,
+        "Maximum Chebyshev polynomial degree."
+      ]
+    },
+    {
+      "id": 139,
+      "type": "StimmaFloatParam",
+      "pos": [
+        200,
+        1890
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "FLOAT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "links": [
+            246
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaFloatParam"
+      },
+      "widgets_values": [
+        "spectrum_ridge",
+        0.1,
+        0.0,
+        10.0,
+        0.01,
+        "slider",
+        52,
+        "Ridge regularization applied to Spectrum's regression fit."
+      ]
+    },
+    {
+      "id": 140,
+      "type": "StimmaFloatParam",
+      "pos": [
+        630,
+        1890
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "FLOAT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "links": [
+            247
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaFloatParam"
+      },
+      "widgets_values": [
+        "spectrum_window",
+        2.0,
+        1.0,
+        16.0,
+        0.05,
+        "slider",
+        53,
+        "Initial interval between actual transformer evaluations."
+      ]
+    },
+    {
+      "id": 141,
+      "type": "StimmaFloatParam",
+      "pos": [
+        1060,
+        1890
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "FLOAT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "FLOAT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "FLOAT",
+          "links": [
+            248
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaFloatParam"
+      },
+      "widgets_values": [
+        "spectrum_flex_window",
+        0.75,
+        0.0,
+        8.0,
+        0.05,
+        "slider",
+        54,
+        "Interval growth after each scheduled actual evaluation; larger values are more aggressive."
+      ]
+    },
+    {
+      "id": 142,
+      "type": "StimmaIntParam",
+      "pos": [
+        1490,
+        1890
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "INT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "INT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "INT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            249
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaIntParam"
+      },
+      "widgets_values": [
+        "spectrum_warmup_steps",
+        5,
+        0,
+        64,
+        1,
+        "slider",
+        55,
+        "Initial solver steps that always run the full transformer."
+      ]
+    },
+    {
+      "id": 143,
+      "type": "StimmaIntParam",
+      "pos": [
+        200,
+        2280
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "INT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "INT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "INT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            250
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaIntParam"
+      },
+      "widgets_values": [
+        "spectrum_tail_steps",
+        1,
+        0,
+        64,
+        1,
+        "slider",
+        56,
+        "Requested final full-transformer steps; supported samplers may enforce a safer minimum."
+      ]
+    },
+    {
+      "id": 144,
+      "type": "StimmaIntParam",
+      "pos": [
+        630,
+        2280
+      ],
+      "size": [
+        384,
+        355
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "minimum",
+          "type": "INT",
+          "widget": {
+            "name": "minimum"
+          },
+          "link": null
+        },
+        {
+          "name": "maximum",
+          "type": "INT",
+          "widget": {
+            "name": "maximum"
+          },
+          "link": null
+        },
+        {
+          "name": "step",
+          "type": "INT",
+          "widget": {
+            "name": "step"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_control",
+          "type": "COMBO",
+          "widget": {
+            "name": "ui_control"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            251
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaIntParam"
+      },
+      "widgets_values": [
+        "spectrum_max_history",
+        8,
+        2,
+        64,
+        1,
+        "slider",
+        57,
+        "Maximum actual feature snapshots retained; must be greater than the polynomial degree."
+      ]
+    },
+    {
+      "id": 145,
+      "type": "StimmaDropdownParam",
+      "pos": [
+        1060,
+        2280
+      ],
+      "size": [
+        384,
+        228
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "STRING",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "*",
+          "links": [
+            252
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaDropdownParam"
+      },
+      "widgets_values": [
+        "spectrum_history_storage",
+        "system_ram",
+        58,
+        "Store Spectrum history in system RAM or VRAM. VRAM can avoid transfers but consumes several additional GiB."
+      ]
+    },
+    {
+      "id": 146,
+      "type": "StimmaBoolParam",
+      "pos": [
+        1490,
+        2280
+      ],
+      "size": [
+        384,
+        180
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "BOOLEAN",
+          "links": [
+            253
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaBoolParam"
+      },
+      "widgets_values": [
+        "spectrum_debug",
+        false,
+        59,
+        "Write detailed Spectrum scheduling and fallback diagnostics to the ComfyUI log."
+      ]
+    },
+    {
+      "id": 147,
+      "type": "StimmaLayoutGroup",
+      "pos": [
+        -1400,
+        680
+      ],
+      "size": [
+        365,
+        240
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "group_label",
+          "type": "STRING",
+          "widget": {
+            "name": "group_label"
+          },
+          "link": null
+        },
+        {
+          "name": "param_names",
+          "type": "STRING",
+          "widget": {
+            "name": "param_names"
+          },
+          "link": null
+        },
+        {
+          "name": "collapsed",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "collapsed"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "StimmaLayoutGroup"
+      },
+      "widgets_values": [
+        "Performance",
+        "model_precision\nspectrum",
+        false,
+        7
+      ]
+    },
+    {
+      "id": 148,
+      "type": "StimmaLayoutGroup",
+      "pos": [
+        -1400,
+        960
+      ],
+      "size": [
+        365,
+        240
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "group_label",
+          "type": "STRING",
+          "widget": {
+            "name": "group_label"
+          },
+          "link": null
+        },
+        {
+          "name": "param_names",
+          "type": "STRING",
+          "widget": {
+            "name": "param_names"
+          },
+          "link": null
+        },
+        {
+          "name": "collapsed",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "collapsed"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "StimmaLayoutGroup"
+      },
+      "widgets_values": [
+        "Spectrum Tuning",
+        "spectrum_blend\nspectrum_degree\nspectrum_ridge\nspectrum_window\nspectrum_flex_window\nspectrum_warmup_steps\nspectrum_tail_steps\nspectrum_max_history\nspectrum_history_storage\nspectrum_debug",
+        true,
+        8
+      ]
     }
   ],
   "links": [
@@ -1608,6 +2890,102 @@
       132,
       4,
       "BOOLEAN"
+    ],
+    [
+      242,
+      135,
+      0,
+      105,
+      11,
+      "STRING"
+    ],
+    [
+      243,
+      136,
+      0,
+      105,
+      12,
+      "BOOLEAN"
+    ],
+    [
+      244,
+      137,
+      0,
+      105,
+      13,
+      "FLOAT"
+    ],
+    [
+      245,
+      138,
+      0,
+      105,
+      14,
+      "INT"
+    ],
+    [
+      246,
+      139,
+      0,
+      105,
+      15,
+      "FLOAT"
+    ],
+    [
+      247,
+      140,
+      0,
+      105,
+      16,
+      "FLOAT"
+    ],
+    [
+      248,
+      141,
+      0,
+      105,
+      17,
+      "FLOAT"
+    ],
+    [
+      249,
+      142,
+      0,
+      105,
+      18,
+      "INT"
+    ],
+    [
+      250,
+      143,
+      0,
+      105,
+      19,
+      "INT"
+    ],
+    [
+      251,
+      144,
+      0,
+      105,
+      20,
+      "INT"
+    ],
+    [
+      252,
+      145,
+      0,
+      105,
+      21,
+      "STRING"
+    ],
+    [
+      253,
+      146,
+      0,
+      105,
+      22,
+      "BOOLEAN"
     ]
   ],
   "groups": [
@@ -1632,7 +3010,7 @@
         "state": {
           "lastGroupId": 5,
           "lastNodeId": 121,
-          "lastLinkId": 240,
+          "lastLinkId": 251,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -1644,7 +3022,7 @@
             -2560,
             4720,
             128,
-            268
+            528
           ]
         },
         "outputNode": {
@@ -1748,7 +3126,7 @@
           },
           {
             "id": "9a6d2811-673c-47e0-aa94-dda7c83621e4",
-            "name": "unet_name",
+            "name": "precision",
             "type": "COMBO",
             "linkIds": [
               221
@@ -1841,6 +3219,138 @@
             "pos": [
               -2456,
               5024
+            ]
+          },
+          {
+            "id": "bdc429e6-d1a5-5c40-b2e4-53fe1c8a162e",
+            "name": "spectrum_enabled",
+            "type": "BOOLEAN",
+            "linkIds": [
+              241
+            ],
+            "pos": [
+              -2456,
+              5020
+            ]
+          },
+          {
+            "id": "44f2fe2e-4122-5bbb-8892-6ded29307bf0",
+            "name": "blend_weight",
+            "type": "FLOAT",
+            "linkIds": [
+              242
+            ],
+            "pos": [
+              -2456,
+              5040
+            ]
+          },
+          {
+            "id": "3df4e6ae-79a4-5ec4-809c-aa672c0d5bea",
+            "name": "degree",
+            "type": "INT",
+            "linkIds": [
+              243
+            ],
+            "pos": [
+              -2456,
+              5060
+            ]
+          },
+          {
+            "id": "39feb37d-2fed-5166-91c8-15863a523739",
+            "name": "ridge_lambda",
+            "type": "FLOAT",
+            "linkIds": [
+              244
+            ],
+            "pos": [
+              -2456,
+              5080
+            ]
+          },
+          {
+            "id": "960be4ad-62f5-576f-aa0a-830972ee4344",
+            "name": "window_size",
+            "type": "FLOAT",
+            "linkIds": [
+              245
+            ],
+            "pos": [
+              -2456,
+              5100
+            ]
+          },
+          {
+            "id": "4230e2c3-bf87-5646-8885-fac33e51ff5e",
+            "name": "flex_window",
+            "type": "FLOAT",
+            "linkIds": [
+              246
+            ],
+            "pos": [
+              -2456,
+              5120
+            ]
+          },
+          {
+            "id": "dc1c3ee7-e2d6-5563-8de9-212277255ae4",
+            "name": "warmup_steps",
+            "type": "INT",
+            "linkIds": [
+              247
+            ],
+            "pos": [
+              -2456,
+              5140
+            ]
+          },
+          {
+            "id": "a6eed462-6593-515e-bbb2-5426cd93dea9",
+            "name": "tail_actual_steps",
+            "type": "INT",
+            "linkIds": [
+              248
+            ],
+            "pos": [
+              -2456,
+              5160
+            ]
+          },
+          {
+            "id": "47747b20-f4de-5f04-a4e2-79c6bd667a45",
+            "name": "max_history",
+            "type": "INT",
+            "linkIds": [
+              249
+            ],
+            "pos": [
+              -2456,
+              5180
+            ]
+          },
+          {
+            "id": "3f3b8540-941e-539d-afde-c3ceeca43360",
+            "name": "history_storage",
+            "type": "COMBO",
+            "linkIds": [
+              250
+            ],
+            "pos": [
+              -2456,
+              5200
+            ]
+          },
+          {
+            "id": "7b5e678b-1d78-52a7-8058-9c7be70a207a",
+            "name": "spectrum_debug",
+            "type": "BOOLEAN",
+            "linkIds": [
+              251
+            ],
+            "pos": [
+              -2456,
+              5220
             ]
           }
         ],
@@ -2285,7 +3795,7 @@
           },
           {
             "id": 6,
-            "type": "UNETLoader",
+            "type": "StimmaMiniMaxH3ModelLoader",
             "pos": [
               -2020,
               4670
@@ -2299,11 +3809,11 @@
             "mode": 0,
             "inputs": [
               {
-                "localized_name": "unet_name",
-                "name": "unet_name",
+                "localized_name": "precision",
+                "name": "precision",
                 "type": "COMBO",
                 "widget": {
-                  "name": "unet_name"
+                  "name": "precision"
                 },
                 "link": 221
               }
@@ -2319,8 +3829,13 @@
               }
             ],
             "properties": {
-              "Node name for S&R": "UNETLoader",
+              "Node name for S&R": "StimmaMiniMaxH3ModelLoader",
               "models": [
+                {
+                  "name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                  "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                  "directory": "diffusion_models"
+                },
                 {
                   "name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
                   "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
@@ -2329,8 +3844,7 @@
               ]
             },
             "widgets_values": [
-              "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
-              "default"
+              "INT8 ConvRot"
             ]
           },
           {
@@ -2705,6 +4219,105 @@
                 "name": "model",
                 "type": "MODEL",
                 "link": 234
+              },
+              {
+                "localized_name": "spectrum_enabled",
+                "name": "spectrum_enabled",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "spectrum_enabled"
+                },
+                "link": 241
+              },
+              {
+                "localized_name": "blend_weight",
+                "name": "blend_weight",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "blend_weight"
+                },
+                "link": 242
+              },
+              {
+                "localized_name": "degree",
+                "name": "degree",
+                "type": "INT",
+                "widget": {
+                  "name": "degree"
+                },
+                "link": 243
+              },
+              {
+                "localized_name": "ridge_lambda",
+                "name": "ridge_lambda",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "ridge_lambda"
+                },
+                "link": 244
+              },
+              {
+                "localized_name": "window_size",
+                "name": "window_size",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "window_size"
+                },
+                "link": 245
+              },
+              {
+                "localized_name": "flex_window",
+                "name": "flex_window",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "flex_window"
+                },
+                "link": 246
+              },
+              {
+                "localized_name": "warmup_steps",
+                "name": "warmup_steps",
+                "type": "INT",
+                "widget": {
+                  "name": "warmup_steps"
+                },
+                "link": 247
+              },
+              {
+                "localized_name": "tail_actual_steps",
+                "name": "tail_actual_steps",
+                "type": "INT",
+                "widget": {
+                  "name": "tail_actual_steps"
+                },
+                "link": 248
+              },
+              {
+                "localized_name": "max_history",
+                "name": "max_history",
+                "type": "INT",
+                "widget": {
+                  "name": "max_history"
+                },
+                "link": 249
+              },
+              {
+                "localized_name": "history_storage",
+                "name": "history_storage",
+                "type": "COMBO",
+                "widget": {
+                  "name": "history_storage"
+                },
+                "link": 250
+              },
+              {
+                "localized_name": "spectrum_debug",
+                "name": "spectrum_debug",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "spectrum_debug"
+                },
+                "link": 251
               }
             ],
             "outputs": [
@@ -3224,6 +4837,94 @@
             "target_id": 104,
             "target_slot": 3,
             "type": "IMAGE"
+          },
+          {
+            "id": 241,
+            "origin_id": -10,
+            "origin_slot": 15,
+            "target_id": 119,
+            "target_slot": 1,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 242,
+            "origin_id": -10,
+            "origin_slot": 16,
+            "target_id": 119,
+            "target_slot": 2,
+            "type": "FLOAT"
+          },
+          {
+            "id": 243,
+            "origin_id": -10,
+            "origin_slot": 17,
+            "target_id": 119,
+            "target_slot": 3,
+            "type": "INT"
+          },
+          {
+            "id": 244,
+            "origin_id": -10,
+            "origin_slot": 18,
+            "target_id": 119,
+            "target_slot": 4,
+            "type": "FLOAT"
+          },
+          {
+            "id": 245,
+            "origin_id": -10,
+            "origin_slot": 19,
+            "target_id": 119,
+            "target_slot": 5,
+            "type": "FLOAT"
+          },
+          {
+            "id": 246,
+            "origin_id": -10,
+            "origin_slot": 20,
+            "target_id": 119,
+            "target_slot": 6,
+            "type": "FLOAT"
+          },
+          {
+            "id": 247,
+            "origin_id": -10,
+            "origin_slot": 21,
+            "target_id": 119,
+            "target_slot": 7,
+            "type": "INT"
+          },
+          {
+            "id": 248,
+            "origin_id": -10,
+            "origin_slot": 22,
+            "target_id": 119,
+            "target_slot": 8,
+            "type": "INT"
+          },
+          {
+            "id": 249,
+            "origin_id": -10,
+            "origin_slot": 23,
+            "target_id": 119,
+            "target_slot": 9,
+            "type": "INT"
+          },
+          {
+            "id": 250,
+            "origin_id": -10,
+            "origin_slot": 24,
+            "target_id": 119,
+            "target_slot": 10,
+            "type": "COMBO"
+          },
+          {
+            "id": 251,
+            "origin_id": -10,
+            "origin_slot": 25,
+            "target_id": 119,
+            "target_slot": 11,
+            "type": "BOOLEAN"
           }
         ],
         "extra": {}
