@@ -1,8 +1,8 @@
 {
   "id": "a9d55d77-cd7c-48aa-8b7f-8c4965b92454",
   "revision": 0,
-  "last_node_id": 109,
-  "last_link_id": 18,
+  "last_node_id": 111,
+  "last_link_id": 20,
   "nodes": [
     {
       "id": 45,
@@ -95,7 +95,7 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            17
+            19
           ]
         }
       ],
@@ -141,13 +141,13 @@
           "localized_name": "samples",
           "name": "samples",
           "type": "LATENT",
-          "link": 16
+          "link": 18
         },
         {
           "localized_name": "vae",
           "name": "vae",
           "type": "VAE",
-          "link": 17
+          "link": 19
         }
       ],
       "outputs": [
@@ -157,7 +157,7 @@
           "type": "IMAGE",
           "slot_index": 0,
           "links": [
-            18
+            20
           ]
         }
       ],
@@ -215,7 +215,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            13
+            15
           ]
         }
       ],
@@ -273,7 +273,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            15
+            17
           ]
         }
       ],
@@ -321,19 +321,19 @@
           "localized_name": "positive",
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 14
+          "link": 16
         },
         {
           "localized_name": "negative",
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 15
+          "link": 17
         },
         {
           "localized_name": "latent_image",
           "name": "latent_image",
           "type": "LATENT",
-          "link": 13
+          "link": 15
         },
         {
           "localized_name": "seed",
@@ -361,6 +361,22 @@
             "name": "cfg"
           },
           "link": 12
+        },
+        {
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          },
+          "link": 13
+        },
+        {
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          },
+          "link": 14
         }
       ],
       "outputs": [
@@ -370,7 +386,7 @@
           "type": "LATENT",
           "slot_index": 0,
           "links": [
-            16
+            18
           ]
         }
       ],
@@ -433,7 +449,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            14
+            16
           ]
         }
       ],
@@ -1064,7 +1080,7 @@
       "type": "StimmaSeedParam",
       "pos": [
         -1050,
-        1760
+        2280
       ],
       "size": [
         384,
@@ -1408,7 +1424,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 18
+          "link": 20
         },
         {
           "name": "filename_prefix",
@@ -1442,7 +1458,7 @@
       "type": "StimmaLayoutGroup",
       "pos": [
         -1050,
-        2910
+        3430
       ],
       "size": [
         365,
@@ -1491,9 +1507,145 @@
       },
       "widgets_values": [
         "Advanced",
-        "negative_prompt !full_width\nsteps\ncfg\nloras\nseed",
+        "negative_prompt !full_width\nsteps\ncfg\nsampler\nscheduler\nloras\nseed",
         true,
         10
+      ]
+    },
+    {
+      "id": 110,
+      "type": "StimmaDropdownParam",
+      "pos": [
+        -1050,
+        1760
+      ],
+      "size": [
+        384,
+        228
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "STRING",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "*",
+          "links": [
+            13
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaDropdownParam"
+      },
+      "widgets_values": [
+        "sampler",
+        "er_sde",
+        40,
+        "Sampling algorithm; er_sde is Anima's neutral, sharp-lined default"
+      ]
+    },
+    {
+      "id": 111,
+      "type": "StimmaDropdownParam",
+      "pos": [
+        -1050,
+        2020
+      ],
+      "size": [
+        384,
+        228
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "name": "value",
+          "type": "STRING",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_order",
+          "type": "INT",
+          "widget": {
+            "name": "ui_order"
+          },
+          "link": null
+        },
+        {
+          "name": "ui_description",
+          "type": "STRING",
+          "widget": {
+            "name": "ui_description"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "*",
+          "links": [
+            14
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StimmaDropdownParam"
+      },
+      "widgets_values": [
+        "scheduler",
+        "simple",
+        41,
+        "Noise schedule; simple is the official Anima workflow default"
       ]
     }
   ],
@@ -1596,6 +1748,22 @@
     ],
     [
       13,
+      110,
+      0,
+      19,
+      7,
+      "STRING"
+    ],
+    [
+      14,
+      111,
+      0,
+      19,
+      8,
+      "STRING"
+    ],
+    [
+      15,
       28,
       0,
       19,
@@ -1603,7 +1771,7 @@
       "LATENT"
     ],
     [
-      14,
+      16,
       11,
       0,
       19,
@@ -1611,7 +1779,7 @@
       "CONDITIONING"
     ],
     [
-      15,
+      17,
       12,
       0,
       19,
@@ -1619,7 +1787,7 @@
       "CONDITIONING"
     ],
     [
-      16,
+      18,
       19,
       0,
       8,
@@ -1627,7 +1795,7 @@
       "LATENT"
     ],
     [
-      17,
+      19,
       15,
       0,
       8,
@@ -1635,7 +1803,7 @@
       "VAE"
     ],
     [
-      18,
+      20,
       8,
       0,
       108,
@@ -1651,7 +1819,7 @@
         -1110,
         -720,
         560,
-        3920
+        4500
       ],
       "color": "#3f789e",
       "font_size": 24,
