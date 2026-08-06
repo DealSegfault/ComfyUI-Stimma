@@ -205,6 +205,84 @@ class TestReferenceToVideoWorkflow(unittest.TestCase):
                 self.assertEqual(node["inputs"][-1]["name"], "target_fps")
                 self.assertEqual(node["widgets_values"][-1], 24)
 
+    def test_performance_controls_feed_reference_model_and_both_consumers(self):
+        workflow_path = Path(ROOT) / "workflows" / "Stimma-MiniMax-H3-R2V.json"
+        workflow = json.loads(workflow_path.read_text())
+        nodes = {node["id"]: node for node in workflow["nodes"]}
+        links = {link[0]: link for link in workflow["links"]}
+
+        loader = next(
+            node for node in workflow["nodes"]
+            if node["type"] == "StimmaMiniMaxH3ReferenceModelLoader"
+        )
+        sage = next(
+            node for node in workflow["nodes"]
+            if node["type"] == "StimmaMiniMaxH3SageAttention"
+        )
+
+        parameter_nodes = {
+            node["widgets_values"][0]: node
+            for node in workflow["nodes"]
+            if node["type"] in {
+                "StimmaBoolParam",
+                "StimmaDropdownParam",
+                "StimmaFloatParam",
+                "StimmaIntParam",
+            }
+        }
+        expected_parameters = {
+            "model_precision",
+            "spectrum",
+            "spectrum_blend",
+            "spectrum_degree",
+            "spectrum_ridge",
+            "spectrum_window",
+            "spectrum_flex_window",
+            "spectrum_warmup_steps",
+            "spectrum_tail_steps",
+            "spectrum_max_history",
+            "spectrum_history_storage",
+            "spectrum_debug",
+        }
+        self.assertTrue(expected_parameters.issubset(parameter_nodes))
+        self.assertEqual(parameter_nodes["model_precision"]["widgets_values"][1], "INT8 ConvRot")
+        self.assertIs(parameter_nodes["spectrum"]["widgets_values"][1], False)
+
+        precision_link = links[loader["inputs"][0]["link"]]
+        self.assertEqual(precision_link[1], parameter_nodes["model_precision"]["id"])
+        self.assertEqual(precision_link[3], loader["id"])
+
+        model_link = links[sage["inputs"][0]["link"]]
+        self.assertEqual(model_link[1], loader["id"])
+        self.assertEqual(model_link[3], sage["id"])
+
+        consumer_types = {
+            nodes[links[link_id][3]]["type"]
+            for link_id in sage["outputs"][0]["links"]
+        }
+        self.assertEqual(consumer_types, {"BasicScheduler", "BasicGuider"})
+
+        spectrum_inputs = {
+            "spectrum_enabled": "spectrum",
+            "blend_weight": "spectrum_blend",
+            "degree": "spectrum_degree",
+            "ridge_lambda": "spectrum_ridge",
+            "window_size": "spectrum_window",
+            "flex_window": "spectrum_flex_window",
+            "warmup_steps": "spectrum_warmup_steps",
+            "tail_actual_steps": "spectrum_tail_steps",
+            "max_history": "spectrum_max_history",
+            "history_storage": "spectrum_history_storage",
+            "spectrum_debug": "spectrum_debug",
+        }
+        for sage_input, parameter_name in spectrum_inputs.items():
+            input_slot = next(
+                item for item in sage["inputs"] if item["name"] == sage_input
+            )
+            link = links[input_slot["link"]]
+            self.assertEqual(link[1], parameter_nodes[parameter_name]["id"])
+            self.assertEqual(link[3], sage["id"])
+
 
 if __name__ == "__main__":
     unittest.main()

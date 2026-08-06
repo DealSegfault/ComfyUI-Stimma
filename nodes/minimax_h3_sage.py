@@ -14,6 +14,11 @@ _H3_DIFFUSION_MODELS = {
     "FP8": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
 }
 
+_H3_REFERENCE_DIFFUSION_MODELS = {
+    "INT8 ConvRot": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+    "FP8": "minimax_h3_ref2va_pruned_fp8_scaled.safetensors",
+}
+
 
 class StimmaMiniMaxH3ModelLoader:
     """Load a supported MiniMax H3 diffusion-model precision by friendly name."""
@@ -34,6 +39,40 @@ class StimmaMiniMaxH3ModelLoader:
         if filename is None:
             choices = ", ".join(_H3_DIFFUSION_MODELS)
             raise ValueError(f"Unsupported MiniMax H3 precision {precision!r}; expected one of: {choices}")
+
+        model_path = folder_paths.get_full_path_or_raise("diffusion_models", filename)
+        return (comfy.sd.load_diffusion_model(model_path, model_options={}),)
+
+
+class StimmaMiniMaxH3ReferenceModelLoader:
+    """Load a supported MiniMax H3 Ref2VA precision by friendly name."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "precision": (
+                    list(_H3_REFERENCE_DIFFUSION_MODELS),
+                    {"default": "INT8 ConvRot"},
+                )
+            }
+        }
+
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "load"
+    CATEGORY = "Stimma/Optimization"
+
+    def load(self, precision):
+        import comfy.sd
+        import folder_paths
+
+        filename = _H3_REFERENCE_DIFFUSION_MODELS.get(precision)
+        if filename is None:
+            choices = ", ".join(_H3_REFERENCE_DIFFUSION_MODELS)
+            raise ValueError(
+                f"Unsupported MiniMax H3 Ref2VA precision {precision!r}; "
+                f"expected one of: {choices}"
+            )
 
         model_path = folder_paths.get_full_path_or_raise("diffusion_models", filename)
         return (comfy.sd.load_diffusion_model(model_path, model_options={}),)
@@ -221,10 +260,12 @@ def _attention_sage_fp8_safe(
 
 NODE_CLASS_MAPPINGS = {
     "StimmaMiniMaxH3ModelLoader": StimmaMiniMaxH3ModelLoader,
+    "StimmaMiniMaxH3ReferenceModelLoader": StimmaMiniMaxH3ReferenceModelLoader,
     "StimmaMiniMaxH3SageAttention": StimmaMiniMaxH3SageAttention,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "StimmaMiniMaxH3ModelLoader": "Stimma MiniMax H3 Model Loader",
+    "StimmaMiniMaxH3ReferenceModelLoader": "Stimma MiniMax H3 Reference Model Loader",
     "StimmaMiniMaxH3SageAttention": "Stimma MiniMax H3 SageAttention",
 }
