@@ -293,5 +293,80 @@ class TestReferenceToVideoWorkflow(unittest.TestCase):
             self.assertEqual(link[3], sage["id"])
 
 
+class TestMiniMaxH3TurboWorkflows(unittest.TestCase):
+    def test_turbo_variants_use_the_fixed_four_step_path(self):
+        workflow_dir = Path(ROOT) / "workflows"
+        paths = sorted(workflow_dir.glob("Stimma-MiniMax-H3-*-Turbo.json"))
+        self.assertEqual(len(paths), 3)
+
+        for path in paths:
+            with self.subTest(workflow=path.name):
+                workflow = json.loads(path.read_text())
+                tool_info = next(
+                    node for node in workflow["nodes"]
+                    if node["type"] == "StimmaToolInfo"
+                )
+                self.assertTrue(tool_info["widgets_values"][0].endswith("-turbo"))
+                self.assertIn("⚡", tool_info["widgets_values"][1])
+
+                parameters = {
+                    node["widgets_values"][0]: node
+                    for node in workflow["nodes"]
+                    if node["type"] in {
+                        "StimmaBoolParam",
+                        "StimmaDropdownParam",
+                        "StimmaFloatParam",
+                        "StimmaIntParam",
+                    }
+                }
+                self.assertNotIn("sampler", parameters)
+                self.assertEqual(parameters["steps"]["widgets_values"][1:3], [4, 4])
+
+                graphs = [workflow]
+                graphs.extend(workflow.get("definitions", {}).get("subgraphs", []))
+                graph = next(
+                    item for item in graphs
+                    if any(node["type"] == "MiniMaxH3TurboLoRA" for node in item["nodes"])
+                )
+                nodes = {node["id"]: node for node in graph["nodes"]}
+                generic_lora = next(
+                    node for node in graph["nodes"]
+                    if node["type"] == "StimmaLoraLoader"
+                )
+                turbo_lora = next(
+                    node for node in graph["nodes"]
+                    if node["type"] == "MiniMaxH3TurboLoRA"
+                )
+                sage = next(
+                    node for node in graph["nodes"]
+                    if node["type"] == "StimmaMiniMaxH3SageAttention"
+                )
+                self.assertEqual(
+                    turbo_lora["widgets_values"],
+                    ["minimax_h3_turbo_4step_ema_ckpt850.safetensors", 1, False],
+                )
+                self.assertTrue(any(
+                    node["type"] == "MiniMaxH3TurboSampler"
+                    for node in graph["nodes"]
+                ))
+
+                if graph["links"] and isinstance(graph["links"][0], list):
+                    links = {link[0]: link for link in graph["links"]}
+                    turbo_input = links[turbo_lora["inputs"][0]["link"]]
+                    sage_input = links[sage["inputs"][0]["link"]]
+                    self.assertEqual(nodes[turbo_input[1]]["id"], generic_lora["id"])
+                    self.assertEqual(turbo_input[3], turbo_lora["id"])
+                    self.assertEqual(sage_input[1], turbo_lora["id"])
+                    self.assertEqual(sage_input[3], sage["id"])
+                else:
+                    links = {link["id"]: link for link in graph["links"]}
+                    turbo_input = links[turbo_lora["inputs"][0]["link"]]
+                    sage_input = links[sage["inputs"][0]["link"]]
+                    self.assertEqual(turbo_input["origin_id"], generic_lora["id"])
+                    self.assertEqual(turbo_input["target_id"], turbo_lora["id"])
+                    self.assertEqual(sage_input["origin_id"], turbo_lora["id"])
+                    self.assertEqual(sage_input["target_id"], sage["id"])
+
+
 if __name__ == "__main__":
     unittest.main()
