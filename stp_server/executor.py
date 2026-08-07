@@ -266,6 +266,7 @@ async def execute_workflow(
 
             # Step 6: Inject output directory
             _inject_output_dir(prompt, workflow, output_dir)
+            _hydrate_missing_widget_defaults(prompt, object_info)
             if workflow.output_nodes:
                 logger.info(f"Injected output dir into {len(workflow.output_nodes)} output nodes")
             else:
@@ -1026,6 +1027,43 @@ def _inject_params(
             value = bool(value)
 
         prompt[node_id]["inputs"][data_field] = value
+
+
+def _hydrate_missing_widget_defaults(
+    prompt: Dict[str, Any], object_info: Dict[str, Any]
+) -> None:
+    """Fill defaults for required widgets added after a workflow was saved.
+
+    ComfyUI validates every member of ``input.required`` even when its node
+    implementation declares a default. Older workflow JSON cannot contain
+    widgets that did not exist when it was saved, so use the live node schema
+    to add only safe literal defaults immediately before queueing.
+    """
+    for node_id, node in prompt.items():
+        inputs = node.setdefault("inputs", {})
+        node_info = object_info.get(node.get("class_type"), {})
+        required = node_info.get("input", {}).get("required", {})
+        for input_name, input_spec in required.items():
+            if input_name in inputs or not isinstance(input_spec, (list, tuple)):
+                continue
+
+            default = None
+            has_default = False
+            if len(input_spec) > 1 and isinstance(input_spec[1], dict):
+                if "default" in input_spec[1]:
+                    default = input_spec[1]["default"]
+                    has_default = True
+            input_type = input_spec[0] if input_spec else None
+            if not has_default and isinstance(input_type, (list, tuple)) and input_type:
+                default = input_type[0]
+                has_default = True
+
+            if has_default:
+                inputs[input_name] = default
+                logger.info(
+                    "Hydrated missing widget default %s.%s on node %s",
+                    node.get("class_type"), input_name, node_id,
+                )
 
 
 def _inject_checkpoints(

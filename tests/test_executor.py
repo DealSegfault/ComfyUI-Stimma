@@ -25,6 +25,7 @@ sys.modules["stp_server.config"] = config_mod
 
 # Now we can import executor functions
 from stp_server.executor import (
+    _hydrate_missing_widget_defaults,
     _inject_fields,
     _is_input_required,
     _strip_unprovided_input_chains,
@@ -150,6 +151,33 @@ class TestIsInputRequired(unittest.TestCase):
             self.assertFalse(
                 _is_input_required("MiniMaxH3ReferenceToVideo", name, {})
             )
+
+
+class TestHydrateMissingWidgetDefaults(unittest.TestCase):
+    def test_legacy_video_param_gets_new_required_widget_defaults(self):
+        prompt = {
+            "26": {
+                "class_type": "StimmaVideoParam",
+                "inputs": {"video": "uploaded.mp4", "ui_control": "videoPicker", "ui_order": 1},
+            }
+        }
+        object_info = {
+            "StimmaVideoParam": {"input": {"required": {
+                "video": (["example.mp4"],),
+                "required": ("BOOLEAN", {"default": True}),
+                "ui_control": (["video_picker"],),
+                "ui_order": ("INT", {"default": 0}),
+                "target_fps": ("INT", {"default": 0}),
+                "frames": ("IMAGE",),
+            }}}
+        }
+
+        _hydrate_missing_widget_defaults(prompt, object_info)
+
+        self.assertEqual(prompt["26"]["inputs"]["video"], "uploaded.mp4")
+        self.assertIs(prompt["26"]["inputs"]["required"], True)
+        self.assertEqual(prompt["26"]["inputs"]["target_fps"], 0)
+        self.assertNotIn("frames", prompt["26"]["inputs"])
 
 
 class TestStripUnprovidedInputChains(unittest.TestCase):
