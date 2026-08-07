@@ -109,6 +109,53 @@ def _extract_combo_values_for_validation(spec) -> Optional[list]:
     return None
 
 
+def _portable_model_name(path: str) -> str:
+    """Return a model basename regardless of the host/path separator.
+
+    ComfyUI returns model names relative to each configured model root. On
+    Windows those names may contain backslashes, while bundled workflows and
+    tests are commonly authored on POSIX hosts with forward slashes.
+    """
+    return path.replace("\\", "/").rsplit("/", 1)[-1]
+
+
+def _resolve_model_combo_value(value: str, available: list) -> tuple:
+    """Resolve a workflow model value to ComfyUI's canonical combo value.
+
+    Prefer an exact match. Otherwise accept a separator-normalized path or a
+    unique basename match, allowing a bundled workflow that names ``foo.sft``
+    to work when ComfyUI exposes it as ``Anima/foo.sft`` from an external or
+    nested model directory. Never guess when multiple files share a basename.
+
+    Returns ``(resolved_value, ambiguous_matches)``. ``resolved_value`` is
+    ``None`` when no safe match exists.
+    """
+    string_values = [candidate for candidate in available if isinstance(candidate, str)]
+    if value in string_values:
+        return value, []
+
+    normalized = value.replace("\\", "/").casefold()
+    path_matches = [
+        candidate for candidate in string_values
+        if candidate.replace("\\", "/").casefold() == normalized
+    ]
+    if len(path_matches) == 1:
+        return path_matches[0], []
+    if len(path_matches) > 1:
+        return None, path_matches
+
+    basename = _portable_model_name(value).casefold()
+    basename_matches = [
+        candidate for candidate in string_values
+        if _portable_model_name(candidate).casefold() == basename
+    ]
+    if len(basename_matches) == 1:
+        return basename_matches[0], []
+    if len(basename_matches) > 1:
+        return None, basename_matches
+    return None, []
+
+
 def _match_path_filter(name: str, pattern: str) -> bool:
     """Match a file path against one or more glob patterns (semicolon-delimited).
 
@@ -150,6 +197,8 @@ def _validate_workflow(
     """Validate a workflow's api_prompt against object_info.
 
     Returns a list of warning strings for missing nodes and missing models.
+    Unique nested model matches are rewritten in ``api_prompt`` to the exact
+    relative path advertised by ComfyUI so the same prompt executes correctly.
     Non-blocking — workflows with warnings can still be listed and attempted.
     """
     if not object_info:
@@ -228,12 +277,27 @@ def _validate_workflow(
                 if spec is not None:
                     combo_values = _extract_combo_values_for_validation(spec)
                     if combo_values and _is_model_combo(combo_values):
-                        if input_value not in combo_values:
+                        resolved, ambiguous = _resolve_model_combo_value(
+                            input_value, combo_values
+                        )
+                        if resolved is not None:
+                            if resolved != input_value:
+                                node_inputs[input_name] = resolved
+                                logger.info(
+                                    "Resolved workflow model %r to ComfyUI path %r "
+                                    "for %s.%s",
+                                    input_value, resolved, class_type, input_name,
+                                )
+                        else:
                             key = (input_value, class_type, input_name)
                             if key not in seen_missing_models:
                                 seen_missing_models.add(key)
+                                detail = ""
+                                if ambiguous:
+                                    detail = "; ambiguous matches: " + ", ".join(ambiguous)
                                 warnings.append(
-                                    f"missing model: {input_value} ({class_type}.{input_name})"
+                                    f"missing model: {input_value} "
+                                    f"({class_type}.{input_name}{detail})"
                                 )
                     break
 

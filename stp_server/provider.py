@@ -283,12 +283,18 @@ class StimmaPluginProvider(Provider):
             except OSError:
                 pass
 
-        # models: check each known subfolder's file listing
-        # folder_paths tracks all model directories — iterate the ones we care about
-        model_subdirs = [
+        # Models: ComfyUI's registry already includes paths loaded from
+        # extra_model_paths.yaml, including categories added by custom nodes.
+        # Include those dynamic categories as well as the core names so adding a
+        # model anywhere ComfyUI knows about invalidates our object_info cache.
+        core_model_subdirs = [
             "checkpoints", "unet", "diffusion_models", "loras",
-            "vae", "clip", "controlnet", "embeddings",
+            "vae", "clip", "text_encoders", "clip_vision", "controlnet",
+            "embeddings", "latent_upscale_models", "upscale_models",
+            "ipadapter",
         ]
+        registered = getattr(folder_paths, "folder_names_and_paths", {})
+        model_subdirs = list(dict.fromkeys(core_model_subdirs + list(registered)))
         for subdir in model_subdirs:
             try:
                 dirs = folder_paths.get_folder_paths(subdir)
