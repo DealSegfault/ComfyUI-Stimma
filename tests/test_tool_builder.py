@@ -307,7 +307,8 @@ class TestMiniMaxH3TurboWorkflows(unittest.TestCase):
                     if node["type"] == "StimmaToolInfo"
                 )
                 self.assertTrue(tool_info["widgets_values"][0].endswith("-turbo"))
-                self.assertIn("⚡", tool_info["widgets_values"][1])
+                self.assertTrue(tool_info["widgets_values"][1].endswith(" ⚡"))
+                self.assertNotIn("Turbo", tool_info["widgets_values"][1])
 
                 parameters = {
                     node["widgets_values"][0]: node

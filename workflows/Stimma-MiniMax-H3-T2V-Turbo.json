@@ -434,7 +434,7 @@
       },
       "widgets_values": [
         "minimax-h3-t2v-turbo",
-        "MiniMax H3 ⚡ Turbo Text to Video",
+        "MiniMax H3 Text to Video ⚡",
         "text-to-video",
         "⚡ Turbo 4-Step\nOpen Weights\nNative Audio\nINT8 Default",
         "Generate synchronized video and stereo audio from text with MiniMax H3 Turbo's four-step preview LoRA.",
