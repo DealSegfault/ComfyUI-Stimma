@@ -75,9 +75,33 @@ class SingleComfy:
             except (json.JSONDecodeError, UnicodeDecodeError):
                 return raw
 
-    async def queue_prompt(self, prompt: Dict[str, Any]) -> Dict[str, Any]:
-        """Queue a workflow prompt for execution."""
-        data = json.dumps({"prompt": prompt, "client_id": self.client_id})
+    async def queue_prompt(
+        self, prompt: Dict[str, Any], preview_frames: bool = True
+    ) -> Dict[str, Any]:
+        """Queue a workflow prompt for execution.
+
+        preview_frames=False asks ComfyUI not to decode previews at all for
+        this prompt. That matters: the decode runs per sampler step on the GPU
+        worker, so suppressing only the delivery would leave the cost in place
+        while nothing consumes it.
+        """
+        # preview_method is applied per-prompt by ComfyUI's executor
+        # (set_preview_method(extra_data.get("preview_method")) resets the
+        # global setting on EVERY execution, so a startup-time override alone
+        # is wiped). taesd uses tiny-VAE decoders from models/vae_approx when
+        # present and falls back to latent2rgb otherwise.
+        data = json.dumps({
+            "prompt": prompt,
+            "client_id": self.client_id,
+            "extra_data": {
+                "preview_method": "taesd" if preview_frames else "none",
+                # Marks the prompt as ours. The sampling process is usually a
+                # DIFFERENT ComfyUI instance than the one hosting this server,
+                # so the previewer there has no other way to tell our jobs from
+                # ones the user started in their own browser.
+                "stimma_preview": bool(preview_frames),
+            },
+        })
         result = await self._request(
             "POST", "/prompt",
             data=data,
@@ -233,8 +257,14 @@ class SingleComfy:
         except aiohttp.ClientError:
             return False
 
-    async def connect_ws(self):
-        """Create a websocket connection for progress monitoring."""
+    async def connect_ws(self, preview_frames: bool = True):
+        """Create a websocket connection for progress monitoring.
+
+        preview_frames: declare supports_preview_metadata so ComfyUI streams
+        live sampler previews to this socket. Pass False (host disabled
+        previews) to skip the declaration — ComfyUI then sends none, and our
+        animated video previewer also skips its per-step assembly work.
+        """
         session = aiohttp.ClientSession()
         try:
             ws = await session.ws_connect(
@@ -242,6 +272,11 @@ class SingleComfy:
                 compress=0,
                 heartbeat=30.0,
             )
+            if preview_frames:
+                # Feature-flag handshake: must be the FIRST client message.
+                await ws.send_json(
+                    {"type": "feature_flags", "data": {"supports_preview_metadata": True}}
+                )
         except Exception:
             await session.close()
             raise

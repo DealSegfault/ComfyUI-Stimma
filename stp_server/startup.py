@@ -149,6 +149,28 @@ def setup_stp_server():
 
     config = load_config()
 
+    # NOTE: we deliberately do NOT touch ComfyUI's global preview settings.
+    # `preview_method` is sent per-prompt in extra_data (ComfyUI's executor
+    # applies it per execution), and the preview resolution is overridden
+    # per-prompt in video_preview.py. Flipping the globals here would change
+    # how the user's OWN browser generations behave, permanently and with no
+    # opt-out.
+
+    # Animated previews for video latents (looping WebP per step), ON.
+    #
+    # Per-family caveat: an in-progress x0 latent is decoded frame-by-frame
+    # with latent2rgb, which is not temporally faithful, and families pack the
+    # time axis differently (MiniMax H3 stores it with the tail REVERSED — see
+    # _TEMPORAL_ORDER in video_preview.py). Verified so far: H3 (reverse_tail),
+    # LTX and Wan (linear). Any other family falls back to `linear` and is
+    # UNVERIFIED — confirm by comparing a preview frame-for-frame against the
+    # finished video before trusting it.
+    try:
+        from . import video_preview
+        video_preview.install()
+    except Exception as e:
+        logger.warning(f"Could not install animated video previews: {e}")
+
     # Install bundled workflows into ComfyUI's user workflow directory
     try:
         sync_bundled_workflows()

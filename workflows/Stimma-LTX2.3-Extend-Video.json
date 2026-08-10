@@ -872,6 +872,7 @@
       },
       "widgets_values": [
         "input.mp4",
+        true,
         "video_picker",
         5
       ]

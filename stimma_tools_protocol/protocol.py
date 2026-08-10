@@ -224,6 +224,11 @@ class ExecuteRequest:
     request_id: str
     tool_id: str
     parameters: dict = field(default_factory=dict)
+    # Whether the host wants in-flight preview frames for THIS execution.
+    # Per-request so the host's setting takes effect immediately without a
+    # reconnect. Absent = yes (hosts that don't know about previews simply
+    # ignore the notifications).
+    preview_frames: bool = True
 
     @classmethod
     def from_dict(cls, data: dict) -> "ExecuteRequest":
@@ -231,6 +236,7 @@ class ExecuteRequest:
             request_id=data["request_id"],
             tool_id=data["tool_id"],
             parameters=data.get("parameters", {}),
+            preview_frames=bool(data.get("preview_frames", True)),
         )
 
 
@@ -254,12 +260,18 @@ class ProgressNotification:
     """Progress notification for a running job."""
     request_id: str
     progress: float  # 0.0 to 1.0
+    # Optional in-flight preview frame: {"mime": "image/jpeg", "data": "<base64>"}.
+    # Protocol extension — hosts that don't understand it ignore extra params.
+    preview: Optional[dict] = None
 
     def to_dict(self) -> dict:
-        return {
+        result = {
             "request_id": self.request_id,
             "progress": self.progress,
         }
+        if self.preview is not None:
+            result["preview"] = self.preview
+        return result
 
 
 @dataclass

@@ -30,6 +30,46 @@ def _norm_control(control: Optional[str]) -> Optional[str]:
     return _CONTROL_ALIASES.get(control, control)
 
 
+# Every control name a media param may legitimately carry, post-alias.
+_KNOWN_MEDIA_CONTROLS = {
+    "image_picker", "video_frame_picker", "video_picker", "audio_picker",
+}
+
+
+def _resolve_media_control(inputs: dict, default: str) -> str:
+    """Resolve a media param's `ui_control`, tolerating stale widget alignment.
+
+    A workflow saved against an older node signature has fewer entries in
+    `widgets_values` than the node now declares, so positional mapping shifts
+    every later widget — `ui_control` then comes back as an int (the ui_order
+    slot) instead of a control name. The host keys media handling off
+    `x-control`, so a shifted value silently turns an image input into a plain
+    string param: its path is never uploaded as an asset, and a remote provider
+    receives a local filesystem path it cannot open.
+
+    Recover by taking the declared value when it is a real control name, else
+    scanning the node's other widget values for one, else the default.
+    """
+    control = _norm_control(inputs.get("ui_control"))
+    if control in _KNOWN_MEDIA_CONTROLS:
+        return control
+    for value in inputs.values():
+        if isinstance(value, str):
+            candidate = _norm_control(value)
+            if candidate in _KNOWN_MEDIA_CONTROLS:
+                logger.warning(
+                    "ui_control misaligned (got %r); recovered %r from widget values — "
+                    "re-save this workflow in ComfyUI to fix it at the source",
+                    inputs.get("ui_control"), candidate,
+                )
+                return candidate
+    logger.warning(
+        "ui_control missing/invalid (got %r); defaulting to %r",
+        inputs.get("ui_control"), default,
+    )
+    return default
+
+
 def _match_lora_filter(name: str, pattern: str) -> bool:
     """Match a LoRA path against a filter pattern.
 
@@ -169,7 +209,7 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
         )
     elif class_type == "StimmaImageParam":
         required = bool(inputs.get("required", True))
-        control = _norm_control(inputs.get("ui_control", "image_picker"))
+        control = _resolve_media_control(inputs, "image_picker")
         controlnet_types = _parse_controlnet_types(inputs.get("controlnet_types", ""))
         ui_hints = {
             "control": control,
@@ -205,7 +245,7 @@ def _build_field_parameter(node: Dict[str, Any]) -> Optional[ToolParameter]:
     elif class_type == "StimmaImagesParam":
         min_images = inputs.get("min_images", 1)
         max_images = inputs.get("max_images", 3)
-        control = _norm_control(inputs.get("ui_control", "image_picker"))
+        control = _resolve_media_control(inputs, "image_picker")
         controlnet_types = _parse_controlnet_types(inputs.get("controlnet_types", ""))
         ui_hints = {
             "control": control,

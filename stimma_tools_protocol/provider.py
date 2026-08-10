@@ -5,8 +5,9 @@ Handles registration, tool listing, heartbeat handling, and job execution.
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, List, Callable, Awaitable
+from typing import Optional, Dict, Any, List, Callable, Awaitable, Tuple
 import asyncio
+import base64
 import logging
 from contextlib import asynccontextmanager
 
@@ -72,6 +73,9 @@ class ProviderConfig:
     max_concurrent: int = 1
     supports_cancel: bool = True  # exposed as the `cancel` capability
     asset_endpoint: str = "/stp-v1/assets"  # Provider's asset endpoint path
+    # Provider streams in-flight preview frames on tools.progress — exposed as
+    # the `preview_frames` capability so hosts can shape their generating UI.
+    preview_frames: bool = False
 
 
 @dataclass
@@ -82,10 +86,28 @@ class ExecutionContext:
     parameters: dict
     assets: AssetManager
     _provider: "Provider"
+    # Host wants in-flight preview frames for this execution (per-request, so
+    # toggling the host setting needs no reconnect).
+    preview_frames: bool = True
 
-    async def report_progress(self, progress: float) -> None:
-        """Report progress (0.0 to 1.0) for this execution."""
-        await self._provider._send_progress(self.request_id, progress)
+    async def report_progress(
+        self,
+        progress: float,
+        preview: Optional[Tuple[str, bytes]] = None,
+        preview_meta: Optional[dict] = None,
+    ) -> None:
+        """Report progress (0.0 to 1.0) for this execution.
+
+        preview: optional in-flight preview frame as (mime, bytes) — e.g.
+        ("image/jpeg", <jpeg bytes>). Callers are responsible for throttling;
+        keep frames small (a few hundred KB at most).
+        preview_meta: optional extra fields merged into the preview payload.
+        `frames` + `frame_ms` mark the image as a vertically stacked sprite
+        sheet the host animates itself.
+        """
+        await self._provider._send_progress(
+            self.request_id, progress, preview=preview, preview_meta=preview_meta
+        )
 
 
 @dataclass
@@ -96,6 +118,7 @@ class Job:
     parameters: dict
     task: Optional[asyncio.Task] = None
     cancelled: bool = False
+    preview_frames: bool = True
 
 
 class Provider:
@@ -116,6 +139,7 @@ class Provider:
         transport: Transport,
         tool_registry: Optional[ToolRegistry] = None,
     ):
+        self.host_capabilities: dict = {}
         self._config = config
         self._transport = transport
         self._registry = tool_registry or get_registry()
@@ -290,7 +314,10 @@ class Provider:
             provider_name=self._config.provider_name,
             server=self._config.server,
             max_concurrent=self._config.max_concurrent,
-            capabilities={"cancel": self._config.supports_cancel},
+            capabilities={
+                "cancel": self._config.supports_cancel,
+                "preview_frames": self._config.preview_frames,
+            },
             asset_endpoint=asset_endpoint,
         )
 
@@ -304,6 +331,9 @@ class Provider:
 
         result = RegistrationResponse.from_dict(response.result)
         self._session_id = result.session_id
+        # Host-declared capabilities (e.g. preview_frames: false = the host
+        # doesn't want in-flight preview frames — skip capturing them).
+        self.host_capabilities = result.capabilities
 
         logger.info(f"Registered with session ID: {self._session_id}")
 
@@ -372,6 +402,7 @@ class Provider:
             request_id=exec_request.request_id,
             tool=tool,
             parameters=exec_request.parameters,
+            preview_frames=exec_request.preview_frames,
         )
         self._queued_jobs.append(job)
         self._job_available.set()
@@ -469,6 +500,7 @@ class Provider:
                 parameters=parameters,
                 assets=self._assets,
                 _provider=self,
+                preview_frames=job.preview_frames,
             )
 
             # Execute the tool
@@ -524,14 +556,31 @@ class Provider:
         )
         await self._handler.send_notification("queue.status", status.to_dict())
 
-    async def _send_progress(self, request_id: str, progress: float) -> None:
+    async def _send_progress(
+        self,
+        request_id: str,
+        progress: float,
+        preview: Optional[Tuple[str, bytes]] = None,
+        preview_meta: Optional[dict] = None,
+    ) -> None:
         """Send progress notification for a job."""
         if not self._handler:
             return
 
+        preview_payload = None
+        if preview is not None:
+            mime, data = preview
+            preview_payload = {
+                "mime": mime,
+                "data": base64.b64encode(data).decode("ascii"),
+            }
+            if preview_meta:
+                preview_payload.update(preview_meta)
+
         notification = ProgressNotification(
             request_id=request_id,
             progress=progress,
+            preview=preview_payload,
         )
         await self._handler.send_notification("tools.progress", notification.to_dict())
 

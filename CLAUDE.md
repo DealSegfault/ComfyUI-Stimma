@@ -94,6 +94,42 @@ Standard STP task types include `text-to-image`, `image-to-image`, `text-to-vide
 
 ## Important Patterns
 
+### Node widgets are POSITIONAL — only ever append (workflow-breaking)
+
+ComfyUI serializes a node's widget values as a bare positional array
+(`widgets_values`) with no names. A saved workflow is therefore bound to the
+exact widget ORDER the node had when it was saved. **Inserting or removing a
+widget anywhere except the end of `INPUT_TYPES` silently breaks every workflow
+already saved** — bundled and user-authored alike — because every widget after
+the insertion point shifts by one slot.
+
+Rules for `nodes/*.py`:
+
+- **Append new widgets at the END of `INPUT_TYPES` (and of `execute(...)`).**
+  Never insert in the middle, never reorder, never delete a widget.
+- A widget you no longer want: keep the slot, ignore the value. Removing it
+  shifts everything after it.
+- Renaming is fine (positions don't use names); changing position is not.
+- Changing a widget's TYPE is also breaking — old workflows keep supplying the
+  old value type (e.g. a STRING landing in an INT slot → "Failed to convert an
+  input value to a INT value" at prompt validation).
+
+This is not theoretical. `02b4214` (2026-08-05) inserted a `required` BOOLEAN
+into `StimmaImageParam`/`StimmaVideoParam` at position 2, shifting
+`controlnet_types` / `ui_control` / `ui_order` for every existing workflow. Six
+bundled workflows (Wan22 I2V ×2, Wan22 FLF2V ×2, SeedVR2 ×2) ended up with
+`ui_control` reading `''` and `ui_order` reading the string `'videoFramePicker'`.
+Symptoms were remote and delayed: an empty `x-control` means the host stops
+treating the parameter as media, so input paths are never uploaded as STP
+assets and a remote provider receives an unopenable local path — and once that
+was worked around, prompt validation failed on the INT slot. Nothing looked
+wrong at author time; it surfaced days later as two unrelated-looking bugs.
+
+If a widget genuinely must change shape, migrate the saved workflows in the
+same commit (`workflows/*.json`, editing `widgets_values` in place — preserve
+order, never re-sort), and remember users have their own copies under ComfyUI's
+`user/default/workflows/` that you cannot migrate.
+
 ### LoRA Handling
 Two node types: `StimmaLoraLoader` has 10 slots that the executor fills directly. `path_filter` uses glob patterns (`flux/**`, `wan/**;flux/**`) to filter the LoRA list from `/object_info`.
 

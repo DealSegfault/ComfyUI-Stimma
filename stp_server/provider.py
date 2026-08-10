@@ -36,6 +36,7 @@ class StimmaPluginProvider(Provider):
             server=f"{PRODUCT_NAME}/{PRODUCT_VERSION}",
             max_concurrent=max_concurrent,
             supports_cancel=True,
+            preview_frames=True,
         )
         self._tool_registry = ToolRegistry()
         super().__init__(provider_config, transport, tool_registry=self._tool_registry)

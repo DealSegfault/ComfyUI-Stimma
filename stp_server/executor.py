@@ -283,10 +283,13 @@ async def execute_workflow(
             logger.info(f"Prompt has {len(prompt)} nodes, class_types: {sorted(node_types)}")
 
             prompt_id = None
+            _previews_enabled = getattr(context, "preview_frames", True)
             try:
-                ws = await instance.connect_ws()
+                ws = await instance.connect_ws(preview_frames=_previews_enabled)
                 try:
-                    queue_response = await instance.queue_prompt(prompt)
+                    queue_response = await instance.queue_prompt(
+                        prompt, preview_frames=_previews_enabled
+                    )
                     queue_node_errors = queue_response.get("node_errors", {}) if isinstance(queue_response, dict) else {}
                     if queue_node_errors:
                         summary = _summarize_queue_node_errors(queue_node_errors, prompt)
@@ -1428,6 +1431,31 @@ async def _monitor_execution(ws, prompt_id: str, context: "ExecutionContext"):
     _last_progress_t = 0.0
     _PROGRESS_MIN_INTERVAL = 0.1
 
+    # Live sampler preview frames arrive on this same socket as binary
+    # messages when ComfyUI's preview method is enabled. Forward them as STP
+    # progress previews, throttled independently of numeric progress. Frames
+    # are only forwarded once our prompt is confirmed executing — this socket
+    # is per-client, but a queued prompt of ours behind another of our own
+    # prompts must not adopt the wrong frames.
+    #
+    # Video jobs: the animated previewer (video_preview.py) in the EXECUTING
+    # instance sends looping WebPs on this same socket as a custom binary
+    # event; once one arrives, the animation supersedes the single-frame
+    # JPEGs entirely. (The previewer may run in a different process than this
+    # server — the socket is the only reliable delivery path.)
+    from .video_preview import STIMMA_VIDEO_PREVIEW_EVENT
+
+    _last_preview_t = 0.0
+    _PREVIEW_MIN_INTERVAL = 0.2
+    _last_progress_value = 0.1
+    _video_mode = False
+    _last_video_t = 0.0
+    # If the animated source stops (its previewer hit an error, or a later
+    # sampler pass emits 4D latents), fall back to single-frame previews
+    # instead of freezing on the last animation for the rest of the run.
+    _VIDEO_MODE_TIMEOUT = 20.0
+    _prompt_executing = False
+
     async for message in ws:
         if message.type == aiohttp.WSMsgType.TEXT:
             data = json.loads(message.data)
@@ -1436,6 +1464,7 @@ async def _monitor_execution(ws, prompt_id: str, context: "ExecutionContext"):
             if msg_type == "progress":
                 prog_data = data.get("data", {})
                 if prog_data.get("prompt_id") == prompt_id:
+                    _prompt_executing = True
                     value = prog_data.get("value", 0)
                     max_val = prog_data.get("max", 1)
                     now = time.time()
@@ -1444,8 +1473,15 @@ async def _monitor_execution(ws, prompt_id: str, context: "ExecutionContext"):
                         value >= max_val or now - _last_progress_t >= _PROGRESS_MIN_INTERVAL
                     ):
                         _last_progress_t = now
-                        # Map ComfyUI progress (0-max) to our range (0.1-0.9)
-                        progress = 0.1 + (value / max_val) * 0.8
+                        # Map ComfyUI progress (0-max) to our range (0.1-0.9).
+                        # Monotonic: multi-sampler pipelines (e.g. LTX base +
+                        # refiner) restart per-node progress; a bar that jumps
+                        # backwards reads as broken, so hold the high-water
+                        # mark instead.
+                        progress = max(
+                            0.1 + (value / max_val) * 0.8, _last_progress_value
+                        )
+                        _last_progress_value = progress
                         await context.report_progress(progress)
 
             elif msg_type == "execution_success":
@@ -1463,6 +1499,7 @@ async def _monitor_execution(ws, prompt_id: str, context: "ExecutionContext"):
                         # Fallback completion signal (queue went idle).
                         logger.info(f"Execution complete for prompt {prompt_id}")
                         return
+                    _prompt_executing = True
 
             elif msg_type == "execution_error":
                 err_data = data.get("data", {})
@@ -1485,6 +1522,55 @@ async def _monitor_execution(ws, prompt_id: str, context: "ExecutionContext"):
                 if not int_data or int_data.get("prompt_id") == prompt_id:
                     raise RuntimeError(
                         f"ComfyUI execution interrupted for prompt {prompt_id}"
+                    )
+
+        elif message.type == aiohttp.WSMsgType.BINARY:
+            # ComfyUI binary event: 4-byte big-endian event type, then payload.
+            # PREVIEW_IMAGE (1): 4-byte image format (1=JPEG, 2=PNG) + image bytes.
+            # PREVIEW_IMAGE_WITH_METADATA (4): 4-byte JSON length + JSON
+            # (carries "image_type" mime) + image bytes.
+            # Defense in depth: if previews are off we asked ComfyUI not to
+            # produce them, but never forward frames that arrive anyway.
+            if not _prompt_executing or not _previews_enabled:
+                continue
+            raw = message.data
+            if len(raw) < 8:
+                continue
+            event_type = int.from_bytes(raw[0:4], "big")
+            if event_type == STIMMA_VIDEO_PREVIEW_EVENT:
+                # Animated WebP from our previewer in the executing instance.
+                # Already throttled at the source; supersedes single-frame
+                # previews for this job.
+                _video_mode = True
+                _last_video_t = time.time()
+                await context.report_progress(
+                    _last_progress_value, preview=("image/webp", raw[4:])
+                )
+                continue
+            mime = None
+            image_bytes = None
+            if event_type == 1:  # PREVIEW_IMAGE
+                img_format = int.from_bytes(raw[4:8], "big")
+                mime = "image/png" if img_format == 2 else "image/jpeg"
+                image_bytes = raw[8:]
+            elif event_type == 4:  # PREVIEW_IMAGE_WITH_METADATA
+                meta_len = int.from_bytes(raw[4:8], "big")
+                if 0 < meta_len <= len(raw) - 8:
+                    try:
+                        metadata = json.loads(raw[8:8 + meta_len])
+                        mime = metadata.get("image_type") or "image/jpeg"
+                    except (ValueError, UnicodeDecodeError):
+                        mime = "image/jpeg"
+                    image_bytes = raw[8 + meta_len:]
+            if _video_mode and time.time() - _last_video_t > _VIDEO_MODE_TIMEOUT:
+                logger.info("animated previews stopped; falling back to single frames")
+                _video_mode = False
+            if image_bytes and not _video_mode:
+                now = time.time()
+                if now - _last_preview_t >= _PREVIEW_MIN_INTERVAL:
+                    _last_preview_t = now
+                    await context.report_progress(
+                        _last_progress_value, preview=(mime, image_bytes)
                     )
 
         elif message.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
