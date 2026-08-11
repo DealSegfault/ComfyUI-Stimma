@@ -6,10 +6,64 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stp_server.discovery import _resolve_model_combo_value, _validate_workflow
+from stp_server.discovery import (
+    _match_path_filter,
+    _resolve_model_combo_value,
+    _validate_workflow,
+)
+from stp_server.tool_builder import (
+    _build_checkpoint_parameter,
+    _build_lora_parameter,
+    _match_lora_filter,
+)
 
 
 class TestModelResolution(unittest.TestCase):
+    def test_forward_slash_filter_matches_windows_model_path(self):
+        self.assertTrue(_match_lora_filter(
+            r"anima\Studio_Ghibli.safetensors", "anima/**"
+        ))
+        self.assertTrue(_match_path_filter(
+            r"sdxl\sd_xl_base_1.0.safetensors", "sdxl/**"
+        ))
+
+    def test_backslash_filter_matches_forward_slash_model_path(self):
+        self.assertTrue(_match_lora_filter(
+            "anima/Studio_Ghibli.safetensors", r"anima\**"
+        ))
+
+    def test_checkpoint_default_uses_comfyui_separator(self):
+        node = {"inputs": {
+            "name": "checkpoint",
+            "ckpt_name": "sdxl/sd_xl_base_1.0.safetensors",
+            "path_filter": "sdxl/**",
+        }}
+        object_info = {"CheckpointLoaderSimple": {"input": {"required": {
+            "ckpt_name": ([r"sdxl\sd_xl_base_1.0.safetensors"],),
+        }}}}
+
+        parameter = _build_checkpoint_parameter(node, object_info)
+
+        self.assertEqual(parameter.enum, [r"sdxl\sd_xl_base_1.0.safetensors"])
+        self.assertEqual(parameter.default, r"sdxl\sd_xl_base_1.0.safetensors")
+
+    def test_lora_default_uses_comfyui_separator(self):
+        node = {"class_type": "StimmaLoraLoader", "inputs": {
+            "path_filter": "anima/**",
+            "lora_1": "anima/Studio_Ghibli.safetensors",
+            "strength_1": 0.75,
+        }}
+        object_info = {"LoraLoader": {"input": {"required": {
+            "lora_name": ([r"anima\Studio_Ghibli.safetensors"],),
+        }}}}
+
+        parameter = _build_lora_parameter(node, object_info)
+
+        self.assertEqual(
+            parameter.default,
+            [{"name": r"anima\Studio_Ghibli.safetensors", "weight": 0.75}],
+        )
+
     def test_exact_match_is_preserved(self):
         resolved, ambiguous = _resolve_model_combo_value(
             "Anima/model.safetensors", ["Anima/model.safetensors"]

@@ -243,7 +243,7 @@ async def execute_workflow(
 
             # Step 5: Inject checkpoints
             if workflow.checkpoint_nodes:
-                _inject_checkpoints(prompt, workflow, parameters)
+                _inject_checkpoints(prompt, workflow, parameters, provider)
 
             # Step 5.5: Inject LoRAs
             if workflow.lora_nodes:
@@ -1073,20 +1073,31 @@ def _inject_checkpoints(
     prompt: Dict[str, Any],
     workflow: "DiscoveredWorkflow",
     parameters: dict,
+    provider: "StimmaPluginProvider",
 ):
     """Inject checkpoint selections into StimmaCheckpointLoader nodes."""
     for ckpt_node in workflow.checkpoint_nodes:
         node_id = ckpt_node["node_id"]
         field_name = ckpt_node.get("name", "checkpoint")
 
-        selected = parameters.get(field_name)
-        if selected is None:
-            continue
-
         if node_id not in prompt:
             logger.warning(f"  Checkpoint node {node_id} not found in prompt")
             continue
 
+        # Even when the client omits an optional parameter, canonicalize the
+        # workflow's saved default to the exact separator ComfyUI advertises.
+        selected = parameters.get(
+            field_name, prompt[node_id]["inputs"].get("ckpt_name")
+        )
+        if selected is None:
+            continue
+
+        from .discovery import _resolve_model_combo_value
+        from .tool_builder import _get_checkpoint_list
+
+        available = _get_checkpoint_list(provider.object_info)
+        resolved, _ = _resolve_model_combo_value(selected, available)
+        selected = resolved if resolved is not None else selected
         prompt[node_id]["inputs"]["ckpt_name"] = selected
         logger.info(f"Injected checkpoint {selected!r} into node {node_id}")
 
@@ -1114,22 +1125,30 @@ def _inject_loras(
         if class_type == "StimmaPairedLoraLoader":
             _inject_paired_loras(prompt, node_id, loras_raw, provider)
         else:
-            _inject_standard_loras(prompt, node_id, loras_raw)
+            _inject_standard_loras(prompt, node_id, loras_raw, provider)
 
 
 def _inject_standard_loras(
     prompt: Dict[str, Any],
     node_id: str,
     loras_raw: list,
+    provider: "StimmaPluginProvider",
 ):
     """Fill StimmaLoraLoader slots with selected LoRAs."""
     for i in range(1, 11):
         prompt[node_id]["inputs"][f"lora_{i}"] = "None"
         prompt[node_id]["inputs"][f"strength_{i}"] = 1.0
+    from .discovery import _resolve_model_combo_value
+    from .tool_builder import _get_lora_list
+
+    available = _get_lora_list(provider.object_info)
     for i, entry in enumerate(loras_raw[:10], 1):
         lora_path = entry.get("path") or entry.get("lora") or entry.get("name", "")
         weight = entry.get("weight", 1.0)
         if lora_path:
+            resolved, _ = _resolve_model_combo_value(lora_path, available)
+            if resolved is not None:
+                lora_path = resolved
             prompt[node_id]["inputs"][f"lora_{i}"] = lora_path
             prompt[node_id]["inputs"][f"strength_{i}"] = weight
             logger.info(f"  Filled slot {i}: {lora_path} @ {weight}")
@@ -1175,7 +1194,12 @@ def _inject_paired_loras(
         if not display_name:
             continue
 
-        pair = pair_map.get(display_name)
+        normalized_display = display_name.replace("\\", "/").casefold()
+        pair = next(
+            (candidate for key, candidate in pair_map.items()
+             if key.replace("\\", "/").casefold() == normalized_display),
+            None,
+        )
         if pair:
             prompt[node_id]["inputs"][f"lora_{i}"] = pair["high"]
             prompt[node_id]["inputs"][f"lora_low_{i}"] = pair["low"]

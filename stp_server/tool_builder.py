@@ -6,7 +6,7 @@ from typing import Dict, Any, List, Optional, TYPE_CHECKING
 
 from stimma_tools_protocol.tool import Tool, ToolParameter, Group, Param
 
-from .discovery import DiscoveredWorkflow
+from .discovery import DiscoveredWorkflow, _resolve_model_combo_value
 
 if TYPE_CHECKING:
     from .config import Config
@@ -76,8 +76,11 @@ def _match_lora_filter(name: str, pattern: str) -> bool:
     Supports semicolon-delimited multiple patterns, * (single directory level),
     and ** (recursive across directories).
     """
+    # ComfyUI exposes nested model names with the host-native separator. Keep
+    # workflows portable by treating both slash styles as directory separators.
+    name = name.replace("\\", "/")
     for part in pattern.split(";"):
-        part = part.strip()
+        part = part.strip().replace("\\", "/")
         if not part:
             continue
         regex = ""
@@ -177,6 +180,10 @@ def _build_checkpoint_parameter(
     available = _get_checkpoint_list(object_info)
     if path_filter:
         available = [c for c in available if _match_lora_filter(c, path_filter)]
+
+    resolved_default, _ = _resolve_model_combo_value(default_ckpt, available)
+    if resolved_default is not None:
+        default_ckpt = resolved_default
 
     return ToolParameter(
         name=name,
@@ -590,6 +597,9 @@ def _build_lora_parameter(
         name = inputs.get(f"lora_{i}", "None")
         weight = inputs.get(f"strength_{i}", 1.0)
         if name != "None":
+            resolved_name, _ = _resolve_model_combo_value(name, available)
+            if resolved_name is not None:
+                name = resolved_name
             defaults.append({"name": name, "weight": weight})
 
     return ToolParameter(

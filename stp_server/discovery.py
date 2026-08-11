@@ -163,8 +163,9 @@ def _match_path_filter(name: str, pattern: str) -> bool:
     tool_builder._match_lora_filter — duplicated here to avoid a circular import.
     """
     import re as _re
+    name = name.replace("\\", "/")
     for part in pattern.split(";"):
-        part = part.strip()
+        part = part.strip().replace("\\", "/")
         if not part:
             continue
         regex = ""
