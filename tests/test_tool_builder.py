@@ -369,5 +369,77 @@ class TestMiniMaxH3TurboWorkflows(unittest.TestCase):
                     self.assertEqual(sage_input["target_id"], sage["id"])
 
 
+class TestLTXLoraWorkflows(unittest.TestCase):
+    def test_every_ltx_family_workflow_exposes_the_generation_lora_path(self):
+        workflow_dir = Path(ROOT) / "workflows"
+        paths = sorted(workflow_dir.glob("Stimma-LTX*.json"))
+        paths.extend(sorted(workflow_dir.glob("Stimma-Sulphur*.json")))
+        self.assertEqual(len(paths), 12)
+
+        for path in paths:
+            with self.subTest(workflow=path.name):
+                workflow = json.loads(path.read_text())
+                graphs = [workflow]
+                graphs.extend(
+                    (workflow.get("definitions") or {}).get("subgraphs") or []
+                )
+                matching = [
+                    (graph, node)
+                    for graph in graphs
+                    for node in graph.get("nodes", [])
+                    if node.get("type") == "StimmaLoraLoader"
+                ]
+                self.assertEqual(len(matching), 1)
+                graph, loader = matching[0]
+                expected_filter = (
+                    "ltx-25/**" if "LTX2.5" in path.name else "ltx-23/**"
+                )
+                self.assertEqual(loader["widgets_values"][0], expected_filter)
+
+                nodes = {node["id"]: node for node in graph["nodes"]}
+                if graph["links"] and isinstance(graph["links"][0], list):
+                    links = {link[0]: link for link in graph["links"]}
+
+                    def endpoints(link_id):
+                        link = links[link_id]
+                        return link[1], link[2], link[3], link[4]
+                else:
+                    links = {link["id"]: link for link in graph["links"]}
+
+                    def endpoints(link_id):
+                        link = links[link_id]
+                        return (
+                            link["origin_id"], link["origin_slot"],
+                            link["target_id"], link["target_slot"],
+                        )
+
+                for slot, link_type in ((0, "MODEL"), (1, "CLIP")):
+                    input_link = links[loader["inputs"][slot]["link"]]
+                    actual_type = (
+                        input_link[5]
+                        if isinstance(input_link, list)
+                        else input_link["type"]
+                    )
+                    self.assertEqual(actual_type, link_type)
+                    self.assertEqual(
+                        endpoints(loader["inputs"][slot]["link"])[2],
+                        loader["id"],
+                    )
+
+                model_targets = {
+                    nodes[endpoints(link_id)[2]]["type"]
+                    for link_id in loader["outputs"][0]["links"]
+                }
+                self.assertTrue(model_targets)
+                self.assertTrue(model_targets <= {
+                    "CFGGuider", "LTXVDualCFGGuider", "LoraLoaderModelOnly",
+                })
+                clip_targets = {
+                    nodes[endpoints(link_id)[2]]["type"]
+                    for link_id in loader["outputs"][1]["links"]
+                }
+                self.assertEqual(clip_targets, {"CLIPTextEncode"})
+
+
 if __name__ == "__main__":
     unittest.main()

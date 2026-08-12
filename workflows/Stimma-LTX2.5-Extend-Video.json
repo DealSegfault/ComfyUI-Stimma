@@ -29,7 +29,7 @@
         }
       },
       "widgets_values": [
-        "- Huggingface: [Lightricks/LTX-2.3](https://huggingface.co/Lightricks/LTX-2.3/)\n- Github: [LTX-2](https://github.com/Lightricks/LTX-2)\n\n## LTX-2.3 Prompting Tips\n\n1. **Core Actions**: Describe events and actions as they occur over time  \n2. **Visual Details**: Describe all visual details you want to appear in the video  \n3. **Audio**: Describe sounds and dialogue needed for the scene\n\n## Report LTX-2.3 Issues\nTo report any issues when running this workflow, [go to GitHub](https://github.com/Lightricks/ComfyUI-LTXVideo/issues)\n\n## Model Links (for Local Users)\n\n**checkpoints**\n\n- [ltx-2.3-22b-dev-fp8.safetensors](https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors)\n\n**loras**\n\n- [ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors](https://huggingface.co/Comfy-Org/ltx-2.3/resolve/main/split_files/loras/ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors)\n- [gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors](https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors)\n\n**latent_upscale_models**\n\n- [ltx-2.3-spatial-upscaler-x2-1.1.safetensors](https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors)\n\n\n## Model Storage Location\n\n```\n📂 ComfyUI/\n├── 📂 models/\n│   ├── 📂 checkpoints/\n│   │   └── ltx-2.3-22b-dev-fp8.safetensors\n│   ├── 📂 loras/\n│   │   ├── ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors\n│   │   └── gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors\n│   └── 📂 latent_upscale_models/\n│       └── ltx-2.3-spatial-upscaler-x2-1.1.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/Comfy-Org/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
+        "- Huggingface: [Lightricks/LTX-2.3](https://huggingface.co/Lightricks/LTX-2.3/)\n- Github: [LTX-2](https://github.com/Lightricks/LTX-2)\n\n## LTX-2.3 Prompting Tips\n\n1. **Core Actions**: Describe events and actions as they occur over time  \n2. **Visual Details**: Describe all visual details you want to appear in the video  \n3. **Audio**: Describe sounds and dialogue needed for the scene\n\n## Report LTX-2.3 Issues\nTo report any issues when running this workflow, [go to GitHub](https://github.com/Lightricks/ComfyUI-LTXVideo/issues)\n\n## Model Links (for Local Users)\n\n**checkpoints**\n\n- [ltx-2.3-22b-dev-fp8.safetensors](https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors)\n\n**loras**\n\n- [ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors](https://huggingface.co/Comfy-Org/ltx-2.3/resolve/main/split_files/loras/ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors)\n- [gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors](https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors)\n\n**latent_upscale_models**\n\n- [ltx-2.3-spatial-upscaler-x2-1.1.safetensors](https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors)\n\n\n## Model Storage Location\n\n```\n\ud83d\udcc2 ComfyUI/\n\u251c\u2500\u2500 \ud83d\udcc2 models/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc2 checkpoints/\n\u2502   \u2502   \u2514\u2500\u2500 ltx-2.3-22b-dev-fp8.safetensors\n\u2502   \u251c\u2500\u2500 \ud83d\udcc2 loras/\n\u2502   \u2502   \u251c\u2500\u2500 ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors\n\u2502   \u2502   \u2514\u2500\u2500 gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors\n\u2502   \u2514\u2500\u2500 \ud83d\udcc2 latent_upscale_models/\n\u2502       \u2514\u2500\u2500 ltx-2.3-spatial-upscaler-x2-1.1.safetensors\n```\n\n## Report Issue\n\nNote: Please update ComfyUI first ([guide](https://docs.comfy.org/installation/update_comfyui)) and prepare required models. Desktop/Cloud updates follow stable releases, so some nightly-supported models may not be available yet.\n\n- Cannot run / runtime errors: [ComfyUI/issues](https://github.com/Comfy-Org/ComfyUI/issues)\n- UI / frontend issues: [ComfyUI_frontend/issues](https://github.com/Comfy-Org/ComfyUI_frontend/issues)\n- Workflow issues: [workflow_templates/issues](https://github.com/Comfy-Org/workflow_templates/issues)\n"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -4624,8 +4624,7 @@
                 "name": "MODEL",
                 "type": "MODEL",
                 "links": [
-                  478,
-                  541
+                  649
                 ]
               }
             ],
@@ -4678,8 +4677,7 @@
                 "name": "CLIP",
                 "type": "CLIP",
                 "links": [
-                  627,
-                  642
+                  650
                 ]
               }
             ],
@@ -4814,7 +4812,7 @@
               }
             },
             "widgets_values": [
-              "Egyptian royal in blue-and-gold headdress and high collar, white dress with golden embroidery and armbands, desert, robot soldiers in formation left and right. She walks steadily forward, head held level and gaze fixed ahead—no dipping or lowering of the head. The camera performs a single, smooth push-in only: starting in a wider shot of her, the robots, and the desert, it moves steadily forward until she is in a medium or medium-close frame, then holds. She stops, posture and head still upright, and says: “The old gods are silent. I am not.” Robot soldiers shift or march in place; sand and fabric move with the wind. No pull-back; the only camera move is the continuous push-in."
+              "Egyptian royal in blue-and-gold headdress and high collar, white dress with golden embroidery and armbands, desert, robot soldiers in formation left and right. She walks steadily forward, head held level and gaze fixed ahead\u2014no dipping or lowering of the head. The camera performs a single, smooth push-in only: starting in a wider shot of her, the robots, and the desert, it moves steadily forward until she is in a medium or medium-close frame, then holds. She stops, posture and head still upright, and says: \u201cThe old gods are silent. I am not.\u201d Robot soldiers shift or march in place; sand and fabric move with the wind. No pull-back; the only camera move is the continuous push-in."
             ]
           },
           {
@@ -5264,6 +5262,305 @@
               "ltx-2.5-video-vae-bf16.safetensors"
             ],
             "title": "LTX-2.5 Video VAE"
+          },
+          {
+            "id": 429,
+            "type": "StimmaLoraLoader",
+            "pos": [
+              2010,
+              4530
+            ],
+            "size": [
+              480,
+              805
+            ],
+            "flags": {},
+            "order": 50,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 649
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "link": 650
+              },
+              {
+                "localized_name": "path_filter",
+                "name": "path_filter",
+                "type": "STRING",
+                "widget": {
+                  "name": "path_filter",
+                  "config": {
+                    "default": "ltx-25/**"
+                  }
+                },
+                "link": null
+              },
+              {
+                "localized_name": "ui_order",
+                "name": "ui_order",
+                "type": "INT",
+                "widget": {
+                  "name": "ui_order"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_1",
+                "name": "lora_1",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_1",
+                "name": "strength_1",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_2",
+                "name": "lora_2",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_2",
+                "name": "strength_2",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_3",
+                "name": "lora_3",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_3",
+                "name": "strength_3",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_4",
+                "name": "lora_4",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_4",
+                "name": "strength_4",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_5",
+                "name": "lora_5",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_5",
+                "name": "strength_5",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_6",
+                "name": "lora_6",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_6",
+                "name": "strength_6",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_7",
+                "name": "lora_7",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_7",
+                "name": "strength_7",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_8",
+                "name": "lora_8",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_8",
+                "name": "strength_8",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_9",
+                "name": "lora_9",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_9",
+                "name": "strength_9",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_10",
+                "name": "lora_10",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_10"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_10",
+                "name": "strength_10",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_10"
+                },
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  478,
+                  541
+                ]
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "slot_index": 1,
+                "links": [
+                  627,
+                  642
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaLoraLoader"
+            },
+            "widgets_values": [
+              "ltx-25/**",
+              24,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1
+            ]
           }
         ],
         "groups": [
@@ -5551,7 +5848,7 @@
           },
           {
             "id": 478,
-            "origin_id": 316,
+            "origin_id": 429,
             "origin_slot": 0,
             "target_id": 282,
             "target_slot": 0,
@@ -5575,7 +5872,7 @@
           },
           {
             "id": 541,
-            "origin_id": 316,
+            "origin_id": 429,
             "origin_slot": 0,
             "target_id": 314,
             "target_slot": 0,
@@ -5999,8 +6296,8 @@
           },
           {
             "id": 627,
-            "origin_id": 317,
-            "origin_slot": 0,
+            "origin_id": 429,
+            "origin_slot": 1,
             "target_id": 313,
             "target_slot": 0,
             "type": "CLIP"
@@ -6095,10 +6392,26 @@
           },
           {
             "id": 642,
-            "origin_id": 317,
-            "origin_slot": 0,
+            "origin_id": 429,
+            "origin_slot": 1,
             "target_id": 303,
             "target_slot": 0,
+            "type": "CLIP"
+          },
+          {
+            "id": 649,
+            "origin_id": 316,
+            "origin_slot": 0,
+            "target_id": 429,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 650,
+            "origin_id": 317,
+            "origin_slot": 0,
+            "target_id": 429,
+            "target_slot": 1,
             "type": "CLIP"
           }
         ],
@@ -6138,7 +6451,7 @@
         },
         "class_type": "LTXVGemmaCLIPModelLoader",
         "_meta": {
-          "title": "🅛🅣🅧 Gemma 3 Model Loader"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Gemma 3 Model Loader"
         }
       },
       "3": {
@@ -6224,7 +6537,7 @@
         },
         "class_type": "LTXVAudioVAELoader",
         "_meta": {
-          "title": "🅛🅣🅧 LTXV Audio VAE Loader"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Audio VAE Loader"
         }
       },
       "14": {
@@ -6240,7 +6553,7 @@
         },
         "class_type": "LTXVAudioVAEDecode",
         "_meta": {
-          "title": "🅛🅣🅧 LTXV Audio VAE Decode"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Audio VAE Decode"
         }
       },
       "15": {
@@ -6269,7 +6582,7 @@
         },
         "class_type": "VHS_VideoCombine",
         "_meta": {
-          "title": "Video Combine 🎥🅥🅗🅢"
+          "title": "Video Combine \ud83c\udfa5\ud83c\udd65\ud83c\udd57\ud83c\udd62"
         }
       },
       "17": {
@@ -6294,7 +6607,7 @@
         },
         "class_type": "MultimodalGuider",
         "_meta": {
-          "title": "🅛🅣🅧 Multimodal Guider"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Multimodal Guider"
         }
       },
       "18": {
@@ -6311,7 +6624,7 @@
         },
         "class_type": "GuiderParameters",
         "_meta": {
-          "title": "🅛🅣🅧 Guider Parameters"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Guider Parameters"
         }
       },
       "19": {
@@ -6324,7 +6637,7 @@
         },
         "class_type": "GuiderParameters",
         "_meta": {
-          "title": "🅛🅣🅧 Guider Parameters"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Guider Parameters"
         }
       },
       "21": {
@@ -6383,7 +6696,7 @@
         },
         "class_type": "LTXVEmptyLatentAudio",
         "_meta": {
-          "title": "🅛🅣🅧 LTXV Empty Latent Audio"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Empty Latent Audio"
         }
       },
       "27": {
@@ -6412,7 +6725,7 @@
         },
         "class_type": "LTXVConcatAVLatent",
         "_meta": {
-          "title": "🅛🅣🅧 LTXV Concat AV Latent"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Concat AV Latent"
         }
       },
       "29": {
@@ -6428,7 +6741,7 @@
         },
         "class_type": "LTXVSeparateAVLatent",
         "_meta": {
-          "title": "🅛🅣🅧 LTXV Separate AV Latent"
+          "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Separate AV Latent"
         }
       },
       "41": {

@@ -1914,7 +1914,7 @@
               }
             },
             "widgets_values": [
-              "Egyptian royal in blue-and-gold headdress and high collar, white dress with golden embroidery and armbands, desert, robot soldiers in formation left and right. She walks steadily forward, head held level and gaze fixed ahead—no dipping or lowering of the head. The camera performs a single, smooth push-in only: starting in a wider shot of her, the robots, and the desert, it moves steadily forward until she is in a medium or medium-close frame, then holds. She stops, posture and head still upright, and says: “The old gods are silent. I am not.” Robot soldiers shift or march in place; sand and fabric move with the wind. No pull-back; the only camera move is the continuous push-in."
+              "Egyptian royal in blue-and-gold headdress and high collar, white dress with golden embroidery and armbands, desert, robot soldiers in formation left and right. She walks steadily forward, head held level and gaze fixed ahead\u2014no dipping or lowering of the head. The camera performs a single, smooth push-in only: starting in a wider shot of her, the robots, and the desert, it moves steadily forward until she is in a medium or medium-close frame, then holds. She stops, posture and head still upright, and says: \u201cThe old gods are silent. I am not.\u201d Robot soldiers shift or march in place; sand and fabric move with the wind. No pull-back; the only camera move is the continuous push-in."
             ]
           },
           {
@@ -2012,8 +2012,7 @@
                 "name": "MODEL",
                 "type": "MODEL",
                 "links": [
-                  771,
-                  772
+                  805
                 ]
               }
             ],
@@ -2515,8 +2514,7 @@
                 "name": "CLIP",
                 "type": "CLIP",
                 "links": [
-                  732,
-                  731
+                  806
                 ]
               }
             ],
@@ -4847,6 +4845,305 @@
               0.7
             ],
             "title": "Stage 2 End Frame Guide"
+          },
+          {
+            "id": 9005,
+            "type": "StimmaLoraLoader",
+            "pos": [
+              1000,
+              6980
+            ],
+            "size": [
+              480,
+              805
+            ],
+            "flags": {},
+            "order": 47,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 805
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "link": 806
+              },
+              {
+                "localized_name": "path_filter",
+                "name": "path_filter",
+                "type": "STRING",
+                "widget": {
+                  "name": "path_filter",
+                  "config": {
+                    "default": "ltx-25/**"
+                  }
+                },
+                "link": null
+              },
+              {
+                "localized_name": "ui_order",
+                "name": "ui_order",
+                "type": "INT",
+                "widget": {
+                  "name": "ui_order"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_1",
+                "name": "lora_1",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_1",
+                "name": "strength_1",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_1"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_2",
+                "name": "lora_2",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_2",
+                "name": "strength_2",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_2"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_3",
+                "name": "lora_3",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_3",
+                "name": "strength_3",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_3"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_4",
+                "name": "lora_4",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_4",
+                "name": "strength_4",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_4"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_5",
+                "name": "lora_5",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_5",
+                "name": "strength_5",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_5"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_6",
+                "name": "lora_6",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_6",
+                "name": "strength_6",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_6"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_7",
+                "name": "lora_7",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_7",
+                "name": "strength_7",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_7"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_8",
+                "name": "lora_8",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_8",
+                "name": "strength_8",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_8"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_9",
+                "name": "lora_9",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_9",
+                "name": "strength_9",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_9"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "lora_10",
+                "name": "lora_10",
+                "shape": 7,
+                "type": "COMBO",
+                "widget": {
+                  "name": "lora_10"
+                },
+                "link": null
+              },
+              {
+                "localized_name": "strength_10",
+                "name": "strength_10",
+                "shape": 7,
+                "type": "FLOAT",
+                "widget": {
+                  "name": "strength_10"
+                },
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  771,
+                  772
+                ]
+              },
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "slot_index": 1,
+                "links": [
+                  732,
+                  731
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StimmaLoraLoader"
+            },
+            "widgets_values": [
+              "ltx-25/**",
+              24,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1,
+              "None",
+              1
+            ]
           }
         ],
         "groups": [
@@ -4998,8 +5295,8 @@
           },
           {
             "id": 732,
-            "origin_id": 387,
-            "origin_slot": 0,
+            "origin_id": 9005,
+            "origin_slot": 1,
             "target_id": 364,
             "target_slot": 0,
             "type": "CLIP"
@@ -5070,8 +5367,8 @@
           },
           {
             "id": 731,
-            "origin_id": 387,
-            "origin_slot": 0,
+            "origin_id": 9005,
+            "origin_slot": 1,
             "target_id": 373,
             "target_slot": 0,
             "type": "CLIP"
@@ -5470,7 +5767,7 @@
           },
           {
             "id": 771,
-            "origin_id": 384,
+            "origin_id": 9005,
             "origin_slot": 0,
             "target_id": 388,
             "target_slot": 0,
@@ -5478,7 +5775,7 @@
           },
           {
             "id": 772,
-            "origin_id": 384,
+            "origin_id": 9005,
             "origin_slot": 0,
             "target_id": 391,
             "target_slot": 0,
@@ -5739,6 +6036,22 @@
             "target_id": -20,
             "target_slot": 2,
             "type": "AUDIO"
+          },
+          {
+            "id": 805,
+            "origin_id": 384,
+            "origin_slot": 0,
+            "target_id": 9005,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 806,
+            "origin_id": 387,
+            "origin_slot": 0,
+            "target_id": 9005,
+            "target_slot": 1,
+            "type": "CLIP"
           }
         ],
         "extra": {}
