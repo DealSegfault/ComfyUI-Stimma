@@ -4888,14 +4888,14 @@
         "Node name for S&R": "MiniMaxH3TurboLoRA",
         "models": [
           {
-            "name": "minimax_h3_turbo_4step_ema_ckpt850.safetensors",
-            "url": "https://huggingface.co/larryvrh/MiniMax-H3-Turbo-Lora/resolve/main/minimax_h3_turbo_4step_ema_ckpt850.safetensors",
+            "name": "minimax_h3_turbo_v4_step600_ema.safetensors",
+            "url": "https://huggingface.co/larryvrh/MiniMax-H3-Turbo-Lora/resolve/main/minimax_h3_turbo_v4_step600_ema.safetensors",
             "directory": "loras"
           }
         ]
       },
       "widgets_values": [
-        "minimax_h3_turbo_4step_ema_ckpt850.safetensors",
+        "minimax_h3_turbo_v4_step600_ema.safetensors",
         1,
         false
       ]

@@ -264,8 +264,21 @@ async def execute_workflow(
                     )
                     del prompt[nid]
 
-            # Step 6: Inject output directory
-            _inject_output_dir(prompt, workflow, output_dir)
+            # Step 6: Inject output directory. A remote ComfyUI reached via
+            # the Modal bridge cannot write to this provider process's local
+            # temp directory. Leave its output node on the remote default
+            # output directory so history capture can fetch the video through
+            # the bridge's /view proxy. Local ComfyUI instances still use the
+            # private STP temp directory and avoid residue as before.
+            instance_addr = str(getattr(instance, "addr", ""))
+            remote_bridge = instance_addr.rsplit(":", 1)[-1] == "8190"
+            if remote_bridge:
+                logger.info(
+                    "Remote ComfyUI bridge detected (%s); using history /view capture",
+                    instance_addr,
+                )
+            else:
+                _inject_output_dir(prompt, workflow, output_dir)
             _hydrate_missing_widget_defaults(prompt, object_info)
             if workflow.output_nodes:
                 logger.info(f"Injected output dir into {len(workflow.output_nodes)} output nodes")
@@ -1706,6 +1719,27 @@ async def _capture_from_history(
                             asset_id = await context.assets.upload(data, ext)
                             return {"asset_id": asset_id}
 
+        # Check audio outputs (SaveAudioAdvanced and StimmaAudioOutput).
+        audios = output.get("audio", output.get("audios", []))
+        for audio_info in audios:
+            filename = audio_info.get("filename", "")
+            if filename:
+                subfolder = audio_info.get("subfolder", "")
+                params = {"filename": filename, "type": audio_info.get("type", "output")}
+                if subfolder:
+                    params["subfolder"] = subfolder
+
+                import aiohttp
+                async with aiohttp.ClientSession(auto_decompress=False) as session:
+                    async with session.get(
+                        f"http://{instance.addr}/view", params=params
+                    ) as resp:
+                        if resp.status == 200:
+                            data = await resp.read()
+                            ext = Path(filename).suffix or ".wav"
+                            asset_id = await context.assets.upload(data, ext)
+                            return {"asset_id": asset_id}
+
     # Check history status messages for error details before giving up
     status_messages = status.get("messages", [])
     for msg_type, msg_data in status_messages:
@@ -1730,5 +1764,6 @@ async def _capture_from_history(
     raise RuntimeError(
         f"Workflow produced no output files (status={status_str}, "
         f"output nodes={n_output_nodes}, expected_stimma_output_nodes={expected_str}). "
-        f"Check that your workflow has a StimmaImageOutput or StimmaVideoOutput node."
+        f"Check that your workflow has a StimmaImageOutput, StimmaVideoOutput, or "
+        "StimmaAudioOutput node."
     )

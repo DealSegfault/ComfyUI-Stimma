@@ -200,8 +200,20 @@ def _attention_sage_fp8_safe(
     **kwargs,
 ):
     """Comfy attention adapter for Sage's accurate FP8 CUDA kernel."""
-    from comfy.ldm.modules.attention import attention_pytorch
+    from comfy.ldm.modules.attention import AttentionTensorContainer, attention_pytorch
     from sageattention import sageattn_qk_int8_pv_fp8_cuda
+
+    # ComfyUI's MiniMax implementation passes its Q/K/V through the
+    # single-owner container wrapper. This adapter is installed directly on
+    # the model alias (so Comfy's decorated wrapper is bypassed); consume the
+    # containers here before accessing tensor attributes or calling Sage.
+    if isinstance(q, AttentionTensorContainer):
+        if not (
+            isinstance(k, AttentionTensorContainer)
+            and isinstance(v, AttentionTensorContainer)
+        ):
+            raise TypeError("q, k, and v must all be attention tensor containers")
+        q, k, v = q.take(), k.take(), v.take()
 
     if mask is not None:
         return attention_pytorch(

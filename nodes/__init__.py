@@ -22,7 +22,7 @@ from .params import (
 )
 from .loras import StimmaLoraLoader, StimmaPairedLoraLoader
 from .checkpoints import StimmaCheckpointLoader
-from .outputs import StimmaImageOutput, StimmaVideoOutput
+from .outputs import StimmaImageOutput, StimmaVideoOutput, StimmaAudioOutput
 from .layout import StimmaLayoutGroup
 from .stitch_assembler import StimmaVideoStitchAssembler
 from .outpaint import StimmaOutpaintPadding
@@ -55,6 +55,7 @@ NODE_CLASS_MAPPINGS = {
     "StimmaCheckpointLoader": StimmaCheckpointLoader,
     "StimmaImageOutput": StimmaImageOutput,
     "StimmaVideoOutput": StimmaVideoOutput,
+    "StimmaAudioOutput": StimmaAudioOutput,
     "StimmaLayoutGroup": StimmaLayoutGroup,
     "StimmaVideoStitchAssembler": StimmaVideoStitchAssembler,
     "StimmaOutpaintPadding": StimmaOutpaintPadding,
@@ -86,6 +87,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "StimmaCheckpointLoader": "Stimma Checkpoint Loader",
     "StimmaImageOutput": "Stimma Image Output",
     "StimmaVideoOutput": "Stimma Video Output",
+    "StimmaAudioOutput": "Stimma Audio Output",
     "StimmaLayoutGroup": "Stimma Layout Group",
     "StimmaVideoStitchAssembler": "Stimma Video Stitch Assembler",
     "StimmaOutpaintPadding": "Stimma Outpaint Padding",

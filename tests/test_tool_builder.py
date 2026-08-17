@@ -344,7 +344,7 @@ class TestMiniMaxH3TurboWorkflows(unittest.TestCase):
                 )
                 self.assertEqual(
                     turbo_lora["widgets_values"],
-                    ["minimax_h3_turbo_4step_ema_ckpt850.safetensors", 1, False],
+                    ["minimax_h3_turbo_v4_step600_ema.safetensors", 1, False],
                 )
                 self.assertTrue(any(
                     node["type"] == "MiniMaxH3TurboSampler"

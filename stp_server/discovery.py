@@ -24,7 +24,7 @@ STIMMA_PARAM_TYPES = {
 }
 STIMMA_LORA_TYPES = {"StimmaLoraLoader", "StimmaPairedLoraLoader"}
 STIMMA_CHECKPOINT_TYPES = {"StimmaCheckpointLoader"}
-STIMMA_OUTPUT_TYPES = {"StimmaImageOutput", "StimmaVideoOutput"}
+STIMMA_OUTPUT_TYPES = {"StimmaImageOutput", "StimmaVideoOutput", "StimmaAudioOutput"}
 STIMMA_LAYOUT_TYPES = {"StimmaLayoutGroup"}
 ALL_STIMMA_TYPES = (
     {STIMMA_TOOL_INFO}

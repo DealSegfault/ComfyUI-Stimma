@@ -261,3 +261,60 @@ class StimmaVideoOutput:
         finally:
             if temp_dir is not None:
                 shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class StimmaAudioOutput:
+    """Audio output node for STP tools.
+
+    Writes a portable WAV file directly into the STP temporary output
+    directory so the provider can upload it as an audio asset. WAV avoids a
+    dependency on an external encoder while preserving the generated audio.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "filename_prefix": ("STRING", {"default": "Stimma"}),
+            },
+            "optional": {
+                "_stimma_output_dir": ("STRING", {"default": ""}),
+            },
+        }
+
+    RETURN_TYPES = ()
+    OUTPUT_NODE = True
+    FUNCTION = "execute"
+    CATEGORY = "Stimma/Outputs"
+
+    @classmethod
+    def IS_CHANGED(cls, **kwargs):
+        import time
+        return time.time()
+
+    def execute(self, audio, filename_prefix="Stimma", _stimma_output_dir=""):
+        import folder_paths
+
+        if _stimma_output_dir:
+            os.makedirs(_stimma_output_dir, exist_ok=True)
+            filepath = os.path.join(_stimma_output_dir, "stimma_output_0000.wav")
+        else:
+            safe_prefix = str(filename_prefix or "Stimma").replace("..", "_").lstrip("/")
+            output_folder = folder_paths.get_output_directory()
+            counter = 1
+            while True:
+                filepath = os.path.join(output_folder, f"{safe_prefix}_{counter:05d}.wav")
+                if not os.path.exists(filepath):
+                    break
+                counter += 1
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        if _write_audio_wav(audio, filepath) is None:
+            raise ValueError("StimmaAudioOutput: input audio is empty or invalid")
+
+        return {"ui": {"audio": [{
+            "filename": os.path.basename(filepath),
+            "subfolder": "",
+            "type": "output",
+        }]}}
